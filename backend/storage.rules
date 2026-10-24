@@ -1,0 +1,19 @@
+rules_version = '2';
+service firebase.storage {
+ match /b/{bucket}/o {
+  function admin() { return request.auth != null && request.auth.token.admin == true; }
+  function image() { return request.resource.size < 5 * 1024 * 1024 && request.resource.contentType.matches('image/(jpeg|png|webp)'); }
+  match /public/{kind}/{file} {
+   allow read: if true;
+   allow create, update: if admin() && kind in ['products','banners','qr'] && image();
+   allow delete: if admin();
+  }
+  match /receipts/{uid}/{orderId}/receipt {
+   function order() { return firestore.get(/databases/(default)/documents/orders/$(orderId)).data; }
+   allow read: if admin() || (request.auth != null && request.auth.uid == uid && order().ownerUid == uid);
+   allow create: if resource == null && request.auth != null && request.auth.uid == uid && order().ownerUid == uid && order().paymentMethod == 'upi' && order().paymentStatus == 'pending_verification' && order().reserved == true && image();
+   allow update, delete: if false;
+  }
+  match /{allPaths=**} { allow read, write: if false; }
+ }
+}

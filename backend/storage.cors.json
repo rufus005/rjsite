@@ -1,0 +1,8 @@
+[
+  {
+    "origin": ["https://YOUR-APPROVED-STORE-DOMAIN"],
+    "method": ["GET", "HEAD"],
+    "responseHeader": ["Content-Type", "Authorization"],
+    "maxAgeSeconds": 3600
+  }
+]

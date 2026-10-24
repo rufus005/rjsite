@@ -1,0 +1,24 @@
+{
+  "name": "rufus-backend",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "npm --prefix functions run build",
+    "lint": "npm --prefix functions run lint",
+    "emulators": "node scripts/emulators.mjs",
+    "preemulators": "npm run build",
+    "test": "node scripts/emulators.mjs --test",
+    "seed": "node scripts/seed.mjs",
+    "admin": "node scripts/admin.mjs",
+    "pretest": "npm run build"
+  },
+  "devDependencies": {
+    "@firebase/rules-unit-testing": "^5.0.0",
+    "firebase": "^12.19.0",
+    "firebase-admin": "^13.0.0",
+    "firebase-tools": "^14.0.0"
+  },
+  "overrides": {
+    "@grpc/grpc-js": "^1.14.0"
+  }
+}

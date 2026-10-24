@@ -1,0 +1,15 @@
+node_modules/
+functions/lib/
+functions/public/
+.env
+.env.*
+!.env.example
+*-debug.log
+.firebase/
+
+*-test.log
+test-results.log
+
+emulator-dev.log
+
+dependency-install.log

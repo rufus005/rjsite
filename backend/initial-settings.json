@@ -1,0 +1,33 @@
+{
+  "storeName": "Rufus Shoe Store",
+  "tagline": "A place for every pair.",
+  "email": "rufus090420@gmail.com",
+  "phone": "",
+  "whatsapp": "",
+  "address": "",
+  "banner": "Store setup in progress.",
+  "bannerImage": "",
+  "siteUrl": "https://rufus-website-540cb.web.app",
+  "shippingFee": 0,
+  "cod": {
+    "enabled": false,
+    "fee": 0,
+    "verificationRequired": true,
+    "instructions": ""
+  },
+  "upi": {
+    "enabled": false,
+    "id": "",
+    "payee": "",
+    "qrImage": "",
+    "instructions": ""
+  },
+  "policies": {
+    "shipping": "Draft \u2014 store owner must supply and approve shipping information before launch. Contact the store for confirmed terms.",
+    "returns": "Draft \u2014 store owner must supply and approve returns information before launch. Contact the store for confirmed terms.",
+    "privacy": "Draft \u2014 store owner must supply and approve privacy information before launch. Contact the store for confirmed terms.",
+    "terms": "Draft \u2014 store owner must supply and approve terms information before launch. Contact the store for confirmed terms.",
+    "about": "Draft \u2014 store owner must supply and approve about information before launch. Contact the store for confirmed terms."
+  },
+  "policiesApproved": false
+}

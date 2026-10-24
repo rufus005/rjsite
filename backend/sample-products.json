@@ -1,0 +1,416 @@
+[
+  {
+    "id": "sample-1",
+    "name": "The Entryway",
+    "slug": "the-entryway",
+    "description": "Sample catalog item for local testing. Illustration, price, stock and specifications are demonstration data, not an offer for sale. A considered home for your everyday pairs, with a space-saving profile.",
+    "type": "rack",
+    "category": "Slim shoe racks",
+    "brand": "Rufus Sample",
+    "sku": "DEMO-1",
+    "published": true,
+    "sample": true,
+    "images": ["/images/sample-1-0.svg", "/images/sample-1-1.svg"],
+    "specifications": {
+      "Capacity": "Sample: 8 pairs",
+      "Dimensions": "Sample: 60 \u00d7 25 \u00d7 90 cm",
+      "Material": "Sample: powder-coated steel"
+    },
+    "warranty": "1-Year Warranty",
+    "warrantyApproved": false,
+    "sourceUrls": [],
+    "seo": {
+      "title": "The Entryway | Rufus Shoe Store",
+      "description": "Sample product for local emulator testing."
+    },
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Sage",
+        "color": "Sage",
+        "size": "",
+        "sku": "DEMO-1-1",
+        "price": 349900,
+        "originalPrice": 399900,
+        "stock": 8,
+        "images": ["/images/sample-1-0.svg"]
+      },
+      {
+        "id": "v2",
+        "name": "Midnight",
+        "color": "Midnight",
+        "size": "",
+        "sku": "DEMO-1-2",
+        "price": 359900,
+        "originalPrice": 399900,
+        "stock": 3,
+        "images": ["/images/sample-1-1.svg"]
+      }
+    ]
+  },
+  {
+    "id": "sample-2",
+    "name": "The Double Decker",
+    "slug": "the-double-decker",
+    "description": "Sample catalog item for local testing. Illustration, price, stock and specifications are demonstration data, not an offer for sale. A considered home for your everyday pairs, with a space-saving profile.",
+    "type": "rack",
+    "category": "Double-decker racks",
+    "brand": "Rufus Sample",
+    "sku": "DEMO-2",
+    "published": true,
+    "sample": true,
+    "images": ["/images/sample-2-0.svg", "/images/sample-2-1.svg"],
+    "specifications": {
+      "Capacity": "Sample: 8 pairs",
+      "Dimensions": "Sample: 60 \u00d7 25 \u00d7 90 cm",
+      "Material": "Sample: powder-coated steel"
+    },
+    "warranty": "1-Year Warranty",
+    "warrantyApproved": false,
+    "sourceUrls": [],
+    "seo": {
+      "title": "The Double Decker | Rufus Shoe Store",
+      "description": "Sample product for local emulator testing."
+    },
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Chalk",
+        "color": "Chalk",
+        "size": "",
+        "sku": "DEMO-2-1",
+        "price": 599900,
+        "originalPrice": 649900,
+        "stock": 8,
+        "images": ["/images/sample-2-0.svg"]
+      },
+      {
+        "id": "v2",
+        "name": "Midnight",
+        "color": "Midnight",
+        "size": "",
+        "sku": "DEMO-2-2",
+        "price": 609900,
+        "originalPrice": 649900,
+        "stock": 3,
+        "images": ["/images/sample-2-1.svg"]
+      }
+    ]
+  },
+  {
+    "id": "sample-3",
+    "name": "The Everyday",
+    "slug": "the-everyday",
+    "description": "Sample catalog item for local testing. Illustration, price, stock and specifications are demonstration data, not an offer for sale. A relaxed everyday silhouette for demonstrating footwear variants.",
+    "type": "footwear",
+    "category": "Footwear",
+    "brand": "Rufus Sample",
+    "sku": "DEMO-3",
+    "published": true,
+    "sample": true,
+    "images": ["/images/sample-3-0.svg", "/images/sample-3-1.svg"],
+    "specifications": {
+      "Upper": "Sample: canvas",
+      "Sole": "Sample: rubber",
+      "Fit": "Sample: regular"
+    },
+    "warranty": "1-Year Warranty",
+    "warrantyApproved": false,
+    "sourceUrls": [],
+    "seo": {
+      "title": "The Everyday | Rufus Shoe Store",
+      "description": "Sample product for local emulator testing."
+    },
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Sand / UK 7",
+        "color": "Sand",
+        "size": "UK 7",
+        "sku": "DEMO-3-1",
+        "price": 199900,
+        "originalPrice": 249900,
+        "stock": 8,
+        "images": ["/images/sample-3-0.svg"]
+      },
+      {
+        "id": "v2",
+        "name": "Midnight / UK 7",
+        "color": "Midnight",
+        "size": "UK 7",
+        "sku": "DEMO-3-2",
+        "price": 209900,
+        "originalPrice": 249900,
+        "stock": 3,
+        "images": ["/images/sample-3-1.svg"]
+      },
+      {
+        "id": "v3",
+        "name": "Sand / UK 8",
+        "color": "Sand",
+        "size": "UK 8",
+        "sku": "DEMO-3-3",
+        "price": 199900,
+        "originalPrice": 249900,
+        "stock": 5,
+        "images": ["/images/sample-3-0.svg"]
+      }
+    ]
+  },
+  {
+    "id": "sample-4",
+    "name": "The Tall Cabinet",
+    "slug": "the-tall-cabinet",
+    "description": "Sample catalog item for local testing. Illustration, price, stock and specifications are demonstration data, not an offer for sale. A considered home for your everyday pairs, with a space-saving profile.",
+    "type": "storage",
+    "category": "Storage cabinets",
+    "brand": "Rufus Sample",
+    "sku": "DEMO-4",
+    "published": true,
+    "sample": true,
+    "images": ["/images/sample-4-0.svg", "/images/sample-4-1.svg"],
+    "specifications": {
+      "Capacity": "Sample: 8 pairs",
+      "Dimensions": "Sample: 60 \u00d7 25 \u00d7 90 cm",
+      "Material": "Sample: powder-coated steel"
+    },
+    "warranty": "1-Year Warranty",
+    "warrantyApproved": false,
+    "sourceUrls": [],
+    "seo": {
+      "title": "The Tall Cabinet | Rufus Shoe Store",
+      "description": "Sample product for local emulator testing."
+    },
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Charcoal",
+        "color": "Charcoal",
+        "size": "",
+        "sku": "DEMO-4-1",
+        "price": 799900,
+        "originalPrice": 849900,
+        "stock": 8,
+        "images": ["/images/sample-4-0.svg"]
+      },
+      {
+        "id": "v2",
+        "name": "Midnight",
+        "color": "Midnight",
+        "size": "",
+        "sku": "DEMO-4-2",
+        "price": 809900,
+        "originalPrice": 849900,
+        "stock": 3,
+        "images": ["/images/sample-4-1.svg"]
+      }
+    ]
+  },
+  {
+    "id": "sample-5",
+    "name": "The Compact",
+    "slug": "the-compact",
+    "description": "Sample catalog item for local testing. Illustration, price, stock and specifications are demonstration data, not an offer for sale. A considered home for your everyday pairs, with a space-saving profile.",
+    "type": "rack",
+    "category": "Slim shoe racks",
+    "brand": "Rufus Sample",
+    "sku": "DEMO-5",
+    "published": true,
+    "sample": true,
+    "images": ["/images/sample-5-0.svg", "/images/sample-5-1.svg"],
+    "specifications": {
+      "Capacity": "Sample: 8 pairs",
+      "Dimensions": "Sample: 60 \u00d7 25 \u00d7 90 cm",
+      "Material": "Sample: powder-coated steel"
+    },
+    "warranty": "1-Year Warranty",
+    "warrantyApproved": false,
+    "sourceUrls": [],
+    "seo": {
+      "title": "The Compact | Rufus Shoe Store",
+      "description": "Sample product for local emulator testing."
+    },
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Terracotta",
+        "color": "Terracotta",
+        "size": "",
+        "sku": "DEMO-5-1",
+        "price": 249900,
+        "originalPrice": 299900,
+        "stock": 8,
+        "images": ["/images/sample-5-0.svg"]
+      },
+      {
+        "id": "v2",
+        "name": "Midnight",
+        "color": "Midnight",
+        "size": "",
+        "sku": "DEMO-5-2",
+        "price": 259900,
+        "originalPrice": 299900,
+        "stock": 3,
+        "images": ["/images/sample-5-1.svg"]
+      }
+    ]
+  },
+  {
+    "id": "sample-6",
+    "name": "The Weekend",
+    "slug": "the-weekend",
+    "description": "Sample catalog item for local testing. Illustration, price, stock and specifications are demonstration data, not an offer for sale. A relaxed everyday silhouette for demonstrating footwear variants.",
+    "type": "footwear",
+    "category": "Footwear",
+    "brand": "Rufus Sample",
+    "sku": "DEMO-6",
+    "published": true,
+    "sample": true,
+    "images": ["/images/sample-6-0.svg", "/images/sample-6-1.svg"],
+    "specifications": {
+      "Upper": "Sample: canvas",
+      "Sole": "Sample: rubber",
+      "Fit": "Sample: regular"
+    },
+    "warranty": "1-Year Warranty",
+    "warrantyApproved": false,
+    "sourceUrls": [],
+    "seo": {
+      "title": "The Weekend | Rufus Shoe Store",
+      "description": "Sample product for local emulator testing."
+    },
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Olive / UK 7",
+        "color": "Olive",
+        "size": "UK 7",
+        "sku": "DEMO-6-1",
+        "price": 229900,
+        "originalPrice": 279900,
+        "stock": 8,
+        "images": ["/images/sample-6-0.svg"]
+      },
+      {
+        "id": "v2",
+        "name": "Midnight / UK 7",
+        "color": "Midnight",
+        "size": "UK 7",
+        "sku": "DEMO-6-2",
+        "price": 239900,
+        "originalPrice": 279900,
+        "stock": 3,
+        "images": ["/images/sample-6-1.svg"]
+      },
+      {
+        "id": "v3",
+        "name": "Olive / UK 8",
+        "color": "Olive",
+        "size": "UK 8",
+        "sku": "DEMO-6-3",
+        "price": 229900,
+        "originalPrice": 279900,
+        "stock": 5,
+        "images": ["/images/sample-6-0.svg"]
+      }
+    ]
+  },
+  {
+    "id": "sample-7",
+    "name": "The Hallway",
+    "slug": "the-hallway",
+    "description": "Sample catalog item for local testing. Illustration, price, stock and specifications are demonstration data, not an offer for sale. A considered home for your everyday pairs, with a space-saving profile.",
+    "type": "rack",
+    "category": "Double-decker racks",
+    "brand": "Rufus Sample",
+    "sku": "DEMO-7",
+    "published": true,
+    "sample": true,
+    "images": ["/images/sample-7-0.svg", "/images/sample-7-1.svg"],
+    "specifications": {
+      "Capacity": "Sample: 8 pairs",
+      "Dimensions": "Sample: 60 \u00d7 25 \u00d7 90 cm",
+      "Material": "Sample: powder-coated steel"
+    },
+    "warranty": "1-Year Warranty",
+    "warrantyApproved": false,
+    "sourceUrls": [],
+    "seo": {
+      "title": "The Hallway | Rufus Shoe Store",
+      "description": "Sample product for local emulator testing."
+    },
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Stone",
+        "color": "Stone",
+        "size": "",
+        "sku": "DEMO-7-1",
+        "price": 699900,
+        "originalPrice": 749900,
+        "stock": 8,
+        "images": ["/images/sample-7-0.svg"]
+      },
+      {
+        "id": "v2",
+        "name": "Midnight",
+        "color": "Midnight",
+        "size": "",
+        "sku": "DEMO-7-2",
+        "price": 709900,
+        "originalPrice": 749900,
+        "stock": 3,
+        "images": ["/images/sample-7-1.svg"]
+      }
+    ]
+  },
+  {
+    "id": "sample-8",
+    "name": "The Utility",
+    "slug": "the-utility",
+    "description": "Sample catalog item for local testing. Illustration, price, stock and specifications are demonstration data, not an offer for sale. A considered home for your everyday pairs, with a space-saving profile.",
+    "type": "storage",
+    "category": "Storage cabinets",
+    "brand": "Rufus Sample",
+    "sku": "DEMO-8",
+    "published": true,
+    "sample": true,
+    "images": ["/images/sample-8-0.svg", "/images/sample-8-1.svg"],
+    "specifications": {
+      "Capacity": "Sample: 8 pairs",
+      "Dimensions": "Sample: 60 \u00d7 25 \u00d7 90 cm",
+      "Material": "Sample: powder-coated steel"
+    },
+    "warranty": "1-Year Warranty",
+    "warrantyApproved": false,
+    "sourceUrls": [],
+    "seo": {
+      "title": "The Utility | Rufus Shoe Store",
+      "description": "Sample product for local emulator testing."
+    },
+    "variants": [
+      {
+        "id": "v1",
+        "name": "Cream",
+        "color": "Cream",
+        "size": "",
+        "sku": "DEMO-8-1",
+        "price": 449900,
+        "originalPrice": 499900,
+        "stock": 8,
+        "images": ["/images/sample-8-0.svg"]
+      },
+      {
+        "id": "v2",
+        "name": "Midnight",
+        "color": "Midnight",
+        "size": "",
+        "sku": "DEMO-8-2",
+        "price": 459900,
+        "originalPrice": 499900,
+        "stock": 3,
+        "images": ["/images/sample-8-1.svg"]
+      }
+    ]
+  }
+]

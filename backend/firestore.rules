@@ -1,0 +1,13 @@
+rules_version = '2';
+service cloud.firestore {
+ match /databases/{database}/documents {
+  function admin() { return request.auth != null && request.auth.token.admin == true; }
+  match /products/{id} { allow read: if resource.data.published == true || admin(); allow write: if false; }
+  match /categories/{id} { allow read: if resource.data.published == true || admin(); allow write: if false; }
+  match /settings/public { allow read: if true; allow write: if false; }
+  match /settings/{id} { allow read: if admin(); allow write: if false; }
+  match /orders/{id} { allow read: if admin(); allow write: if false; }
+  match /audit/{id} { allow read: if admin(); allow write: if false; }
+  match /{document=**} { allow read, write: if false; }
+ }
+}

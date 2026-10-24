@@ -1,0 +1,33 @@
+{
+  "storeName": "Rufus Shoe Store",
+  "tagline": "A place for every pair.",
+  "email": "",
+  "phone": "",
+  "whatsapp": "",
+  "address": "",
+  "banner": "Thoughtful storage. Everyday living.",
+  "bannerImage": "",
+  "siteUrl": "http://localhost:5000",
+  "shippingFee": 9900,
+  "cod": {
+    "enabled": true,
+    "fee": 4900,
+    "verificationRequired": true,
+    "instructions": "Sample: our team will contact you to confirm your order. No automated OTP is configured."
+  },
+  "upi": {
+    "enabled": true,
+    "id": "demo@invalid",
+    "payee": "Rufus Demo \u2014 DO NOT PAY",
+    "qrImage": "",
+    "instructions": "Emulator only. Do not send money. Enter a sample reference to test manual verification."
+  },
+  "policies": {
+    "shipping": "Draft \u2014 store owner must supply and approve shipping information before launch. Contact the store for confirmed terms.",
+    "returns": "Draft \u2014 store owner must supply and approve returns information before launch. Contact the store for confirmed terms.",
+    "privacy": "Draft \u2014 store owner must supply and approve privacy information before launch. Contact the store for confirmed terms.",
+    "terms": "Draft \u2014 store owner must supply and approve terms information before launch. Contact the store for confirmed terms.",
+    "about": "Draft \u2014 store owner must supply and approve about information before launch. Contact the store for confirmed terms."
+  },
+  "policiesApproved": false
+}
