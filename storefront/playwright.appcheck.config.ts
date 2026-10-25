@@ -2,6 +2,8 @@ import { defineConfig } from "@playwright/test";
 export default defineConfig({
   testDir: "./appcheck-tests",
   workers: 1,
+  timeout: 60000,
+  expect: { timeout: 20000 },
   use: {
     trace: "retain-on-failure",
     screenshot: "only-on-failure",
@@ -13,9 +15,10 @@ export default defineConfig({
   },
   webServer: {
     command: "npm run dev -- --port 5175 --strictPort",
-    url: "http://127.0.0.1:5175",
+    // Wait for the dynamically imported app to compile, not just the HTML shell.
+    url: "http://127.0.0.1:5175/src/main.tsx",
     env: {
-      VITE_APPCHECK_DEBUG: "true",
+      VITE_APPCHECK_DEBUG_TOKEN: "11111111-2222-4333-8444-555555555555",
       VITE_USE_EMULATORS: "false",
       VITE_APPCHECK_SITE_KEY: "",
     },

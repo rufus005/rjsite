@@ -10,7 +10,6 @@ import {
 import {
   initializeAppCheck,
   ReCaptchaEnterpriseProvider,
-  CustomProvider,
   getToken,
   type AppCheck,
 } from "firebase/app-check";
@@ -38,38 +37,34 @@ const app = initializeApp({
 });
 // Register App Check before creating clients that consume its tokens.
 let appCheck: AppCheck | undefined;
-let appCheckError = "";
-if (!isEmulator) {
+if (!isEmulator && typeof window !== "undefined") {
   const key = import.meta.env.VITE_APPCHECK_SITE_KEY?.trim();
-  // The SDK exchanges a browser-generated debug token with Firebase. It does
-  // not bypass server enforcement, Auth, or rules. Never accept token strings
-  // from VITE_* variables (they would be embedded in browser bundles).
-  const debug =
+  const debugToken = import.meta.env.VITE_APPCHECK_DEBUG_TOKEN?.trim();
+  const debugGlobal = self as typeof self & {
+    FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean | string;
+  };
+  // Debug credentials require localhost, a development build, and an explicit
+  // token. Never enable them on deployed hosts or production builds.
+  if (
     import.meta.env.DEV &&
-    env.VITE_APPCHECK_DEBUG === "true" &&
-    ["localhost", "127.0.0.1", "[::1]"].includes(location.hostname);
-  if (debug) {
-    (
-      self as typeof self & { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean }
-    ).FIREBASE_APPCHECK_DEBUG_TOKEN = true;
-    appCheck = initializeAppCheck(app, {
-      // In SDK debug mode token exchange happens before provider.getToken.
-      // A fail-closed provider avoids inventing a reCAPTCHA site key.
-      provider: new CustomProvider({
-        getToken: async () => {
-          throw Error("Local App Check debug mode is not active.");
-        },
-      }),
-      isTokenAutoRefreshEnabled: true,
-    });
-  } else if (!key || !/^[A-Za-z0-9_-]{20,}$/.test(key)) {
-    appCheckError =
-      "Configure VITE_APPCHECK_SITE_KEY with the reCAPTCHA Enterprise site key registered in Firebase App Check, then rebuild. A database URL is not a site key.";
+    window.location.hostname === "localhost" &&
+    debugToken
+  ) {
+    debugGlobal.FIREBASE_APPCHECK_DEBUG_TOKEN = debugToken;
   } else {
-    appCheck = initializeAppCheck(app, {
-      provider: new ReCaptchaEnterpriseProvider(key),
-      isTokenAutoRefreshEnabled: true,
-    });
+    delete debugGlobal.FIREBASE_APPCHECK_DEBUG_TOKEN;
+  }
+  if (key) {
+    try {
+      appCheck = initializeAppCheck(app, {
+        provider: new ReCaptchaEnterpriseProvider(key),
+        isTokenAutoRefreshEnabled: true,
+      });
+    } catch {
+      console.warn(
+        "App Check could not initialize; continuing without App Check.",
+      );
+    }
   }
 }
 export const auth = getAuth(app),
@@ -83,19 +78,20 @@ if (isEmulator) {
   connectStorageEmulator(storage, host, 9199);
   connectFunctionsEmulator(functions, host, 5001);
 }
+// Warm up attestation in the background. Neither a failed exchange nor a slow
+// provider should gate rendering, authentication, or starting a request. The
+// Firebase SDK attaches tokens and the backend retains its own enforcement.
+let appCheckWarmup: Promise<void> | undefined;
 export async function ensureAppCheck() {
-  if (isEmulator) return;
-  if (appCheckError) throw Error(appCheckError);
-  try {
-    await getToken(appCheck!);
-  } catch (cause) {
-    throw Error(
-      import.meta.env.DEV && env.VITE_APPCHECK_DEBUG === "true"
-        ? "App Check debug verification failed. Register this browser's debug token from the developer console in Firebase App Check > Manage debug tokens for rufus-website-540cb, then retry. Your sign-in has not been changed."
-        : "App Check verification failed. Check the registered reCAPTCHA Enterprise site key and allowed domain in Firebase App Check. Your sign-in has not been changed.",
-      { cause },
-    );
-  }
+  if (!appCheck) return;
+  appCheckWarmup ??= getToken(appCheck).then(
+    () => {},
+    () => {
+      console.warn(
+        "App Check verification failed; continuing with the request.",
+      );
+    },
+  );
 }
 export async function prepareAdminRequest() {
   await auth.authStateReady();

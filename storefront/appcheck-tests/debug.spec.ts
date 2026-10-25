@@ -1,20 +1,49 @@
-import { test, expect } from "@playwright/test";
+import { test, expect, type Page } from "@playwright/test";
 
-test("localhost debug exchanges with Firebase without a site key and fails closed on rejection", async ({
-  page,
-}) => {
-  let exchanges = 0;
-  let dataRequests = 0;
-  let recaptchaRequests = 0;
-  // All external traffic is intercepted: this test never reaches live Firebase.
+const debugToken = "11111111-2222-4333-8444-555555555555";
+
+async function intercept(
+  page: Page,
+  options: {
+    siteKey?: string;
+    debugToken?: string;
+    production?: boolean;
+    initializationFailure?: boolean;
+  } = {},
+) {
+  const requests = { exchanges: 0, signIns: 0 };
+  // Keep all Firebase traffic isolated from the live project.
   await page.route("**/*", async (route) => {
     const url = new URL(route.request().url());
-    if (url.hostname === "127.0.0.1") return route.continue();
+    if (url.port === "5175") {
+      url.hostname = "127.0.0.1";
+      const response = await route.fetch({ url: url.href });
+      if (url.pathname === "/src/services/firebase/index.ts") {
+        let body = await response.text();
+        body = body
+          .replace(
+            /import\.meta\.env\.VITE_APPCHECK_SITE_KEY/g,
+            JSON.stringify(options.siteKey ?? ""),
+          )
+          .replace(
+            /import\.meta\.env\.VITE_APPCHECK_DEBUG_TOKEN/g,
+            JSON.stringify(options.debugToken ?? debugToken),
+          );
+        if (options.production)
+          body = body.replace(/import\.meta\.env\.DEV/g, "false");
+        if (options.initializationFailure) {
+          body = body.replace(
+            "appCheck = initializeAppCheck(app,",
+            'appCheck = (() => { throw Error("Test initialization failure"); })(app,',
+          );
+        }
+        return route.fulfill({ response, body });
+      }
+      return route.fulfill({ response });
+    }
     if (url.pathname.endsWith(":exchangeDebugToken")) {
-      exchanges++;
-      expect(route.request().postDataJSON().debug_token).toMatch(
-        /^[a-f0-9-]{36}$/i,
-      );
+      requests.exchanges++;
+      expect(route.request().postDataJSON().debug_token).toBe(debugToken);
       return route.fulfill({
         status: 403,
         contentType: "application/json",
@@ -23,49 +52,104 @@ test("localhost debug exchanges with Firebase without a site key and fails close
         }),
       });
     }
-    if (/firestore|firebasestorage|cloudfunctions/.test(url.hostname))
-      dataRequests++;
-    if (/recaptcha/.test(url.href)) recaptchaRequests++;
+    if (url.pathname.endsWith(":signInWithPassword")) {
+      requests.signIns++;
+      return route.fulfill({
+        status: 400,
+        contentType: "application/json",
+        body: JSON.stringify({
+          error: { code: 400, message: "INVALID_LOGIN_CREDENTIALS" },
+        }),
+      });
+    }
     return route.abort();
   });
-  await page.goto("/");
+  return requests;
+}
+
+async function expectSignInAvailable(page: Page) {
   await expect(
-    page.getByText(/App Check debug verification failed/).first(),
-  ).toBeVisible({ timeout: 20000 });
-  expect(exchanges).toBeGreaterThan(0);
-  expect(dataRequests).toBe(0);
-  expect(recaptchaRequests).toBe(0);
-  expect(
-    await page.evaluate(
-      () =>
-        (self as typeof self & { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean })
-          .FIREBASE_APPCHECK_DEBUG_TOKEN,
+    page.getByRole("heading", { name: "Welcome back." }),
+  ).toBeVisible();
+  await expect(
+    page.getByRole("button", { name: "Sign in", exact: true }),
+  ).toBeEnabled();
+  await expect(
+    page.getByText(
+      /Your sign-in has not been changed|Configure VITE_APPCHECK_SITE_KEY/,
     ),
-  ).toBe(true);
+  ).toHaveCount(0);
+}
+
+for (const hostname of [
+  "localhost",
+  "127.0.0.1",
+  "rufus.vercel.app",
+  "store.example.com",
+]) {
+  test(`missing key keeps admin accessible on ${hostname}`, async ({
+    page,
+  }) => {
+    const requests = await intercept(page);
+    await page.goto(`http://${hostname}:5175/admin`);
+    await expectSignInAvailable(page);
+    const token = await page.evaluate(
+      () =>
+        (self as typeof self & { FIREBASE_APPCHECK_DEBUG_TOKEN?: string })
+          .FIREBASE_APPCHECK_DEBUG_TOKEN,
+    );
+    expect(token).toBe(hostname === "localhost" ? debugToken : undefined);
+    expect(requests.exchanges).toBe(0);
+    await page.getByLabel("Email", { exact: true }).fill("admin@example.com");
+    await page.getByLabel("Password", { exact: true }).fill("test-password");
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect.poll(() => requests.signIns).toBe(1);
+  });
+}
+
+for (const options of [{ production: true }, { debugToken: "" }]) {
+  test(`localhost requires an explicit token and development build: ${JSON.stringify(options)}`, async ({
+    page,
+  }) => {
+    await intercept(page, options);
+    await page.goto("http://localhost:5175/admin");
+    await expectSignInAvailable(page);
+    expect(
+      await page.evaluate(
+        () =>
+          (self as typeof self & { FIREBASE_APPCHECK_DEBUG_TOKEN?: string })
+            .FIREBASE_APPCHECK_DEBUG_TOKEN,
+      ),
+    ).toBeUndefined();
+  });
+}
+
+test("initialization failure keeps admin sign-in available", async ({
+  page,
+}) => {
+  const errors: string[] = [];
+  page.on("pageerror", (error) => errors.push(error.message));
+  const requests = await intercept(page, {
+    siteKey: "test-enterprise-site-key",
+    initializationFailure: true,
+  });
+  await page.goto("http://localhost:5175/admin");
+  await expectSignInAvailable(page);
+  await page.getByLabel("Email", { exact: true }).fill("admin@example.com");
+  await page.getByLabel("Password", { exact: true }).fill("test-password");
+  await page.getByRole("button", { name: "Sign in", exact: true }).click();
+  await expect.poll(() => requests.signIns).toBe(1);
+  expect(errors).toEqual([]);
 });
 
-test("debug opt-in is ignored on a non-loopback hostname", async ({ page }) => {
-  let exchanges = 0;
-  await page.route("**/*", async (route) => {
-    const url = new URL(route.request().url());
-    if (url.hostname === "rufus.invalid") {
-      url.hostname = "127.0.0.1";
-      const response = await route.fetch({ url: url.href });
-      return route.fulfill({ response });
-    }
-    if (url.pathname.endsWith(":exchangeDebugToken")) exchanges++;
-    return route.abort();
+test("rejected debug exchange does not block admin rendering", async ({
+  page,
+}) => {
+  const requests = await intercept(page, {
+    siteKey: "test-enterprise-site-key",
   });
-  await page.goto("http://rufus.invalid:5175/");
-  await expect(
-    page.getByText(/Configure VITE_APPCHECK_SITE_KEY/).first(),
-  ).toBeVisible();
-  expect(exchanges).toBe(0);
-  expect(
-    await page.evaluate(
-      () =>
-        (self as typeof self & { FIREBASE_APPCHECK_DEBUG_TOKEN?: boolean })
-          .FIREBASE_APPCHECK_DEBUG_TOKEN,
-    ),
-  ).toBeUndefined();
+  await page.goto("http://localhost:5175/admin");
+  await expectSignInAvailable(page);
+  await expect.poll(() => requests.exchanges).toBeGreaterThan(0);
+  await expectSignInAvailable(page);
 });

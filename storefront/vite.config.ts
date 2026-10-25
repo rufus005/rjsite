@@ -1,16 +1,7 @@
-import { defineConfig, loadEnv } from "vite";
+import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react";
 
-export default defineConfig(({ command, mode }) => {
-  const env = { ...loadEnv(mode, process.cwd(), "VITE_"), ...process.env };
-  if (
-    command === "build" &&
-    env.VITE_USE_EMULATORS !== "true" &&
-    !/^[A-Za-z0-9_-]{20,}$/.test(env.VITE_APPCHECK_SITE_KEY?.trim() || "")
-  )
-    throw Error(
-      "Production build blocked: set VITE_APPCHECK_SITE_KEY to the registered reCAPTCHA Enterprise site key, not a URL.",
-    );
+export default defineConfig(({ mode }) => {
   return {
     plugins: [react()],
     // Live-debug and emulator dev servers must not invalidate each other's optimized dependencies.

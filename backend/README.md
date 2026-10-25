@@ -126,22 +126,18 @@ The existing relative paths intentionally resolve within `frontend`; preserve th
 
 ### Local debug provider (live Firebase, development only)
 
-Create `frontend/storefront/.env.development.local` containing only
-`VITE_APPCHECK_DEBUG=true`, then run `npm --prefix frontend/storefront run dev`.
-Open the app on `http://127.0.0.1:5173`. The Firebase SDK prints a private debug
-token in that browser's developer console. Register it under this project's
-App Check → Apps → the web app → Manage debug tokens, then reload. This is a
-required one-time authorization for each local browser; code cannot register it
-on behalf of a project owner. Keep the token private. Never copy it into a
-`VITE_*` variable, commit it, or add localhost to reCAPTCHA's allowed domains.
+Set `VITE_APPCHECK_DEBUG_TOKEN=<registered debug token>` in
+`frontend/storefront/.env.development.local`, along with the registered
+`VITE_APPCHECK_SITE_KEY`, then run `npm --prefix frontend/storefront run dev`.
+Open `http://localhost:5173`. Debug mode requires that exact hostname, a Vite
+development build, and an explicitly configured token. It is disabled on
+production builds, Vercel domains, and other hosts (including `127.0.0.1`).
+Never commit a debug token or configure one in Vercel/production environments.
 
-The debug path requires Vite development mode, the explicit boolean opt-in, and
-a loopback hostname. It uses Firebase's real debug-token exchange; it does not
-mint attestation, skip enforcement, or alter Auth/admin claims. A fail-closed
-custom provider permits debug initialization without a fabricated reCAPTCHA key.
-Production still uses the registered reCAPTCHA Enterprise site key and the build rejects a
-missing key. `npm run build:emulators` verifies bundling for demo-rufus only and
-is not a deployable production configuration.
+Missing site keys skip App Check initialization. Initialization and token
+exchange failures do not gate rendering or admin sign-in. Firebase server-side
+App Check enforcement, security rules, and administrator claims still apply;
+protected operations require valid attestation if enforcement is enabled.
 
 Product removal uses **Archive**, a reversible soft deletion (`published:false`)
 through the admin callable. It removes the product from public subscriptions
