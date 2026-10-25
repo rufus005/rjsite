@@ -9,7 +9,7 @@ export default defineConfig(({ command, mode }) => {
     !/^[A-Za-z0-9_-]{20,}$/.test(env.VITE_APPCHECK_SITE_KEY?.trim() || "")
   )
     throw Error(
-      "Production build blocked: set VITE_APPCHECK_SITE_KEY to the registered reCAPTCHA v3 public site key, not a URL.",
+      "Production build blocked: set VITE_APPCHECK_SITE_KEY to the registered reCAPTCHA Enterprise site key, not a URL.",
     );
   return {
     plugins: [react()],

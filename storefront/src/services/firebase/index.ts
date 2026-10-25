@@ -9,7 +9,7 @@ import {
 } from "firebase/functions";
 import {
   initializeAppCheck,
-  ReCaptchaV3Provider,
+  ReCaptchaEnterpriseProvider,
   CustomProvider,
   getToken,
   type AppCheck,
@@ -40,7 +40,7 @@ const app = initializeApp({
 let appCheck: AppCheck | undefined;
 let appCheckError = "";
 if (!isEmulator) {
-  const key = env.VITE_APPCHECK_SITE_KEY?.trim();
+  const key = import.meta.env.VITE_APPCHECK_SITE_KEY?.trim();
   // The SDK exchanges a browser-generated debug token with Firebase. It does
   // not bypass server enforcement, Auth, or rules. Never accept token strings
   // from VITE_* variables (they would be embedded in browser bundles).
@@ -64,10 +64,10 @@ if (!isEmulator) {
     });
   } else if (!key || !/^[A-Za-z0-9_-]{20,}$/.test(key)) {
     appCheckError =
-      "Configure VITE_APPCHECK_SITE_KEY with the reCAPTCHA v3 public site key registered in Firebase App Check, then rebuild. A database URL is not a site key.";
+      "Configure VITE_APPCHECK_SITE_KEY with the reCAPTCHA Enterprise site key registered in Firebase App Check, then rebuild. A database URL is not a site key.";
   } else {
     appCheck = initializeAppCheck(app, {
-      provider: new ReCaptchaV3Provider(key),
+      provider: new ReCaptchaEnterpriseProvider(key),
       isTokenAutoRefreshEnabled: true,
     });
   }
@@ -92,7 +92,7 @@ export async function ensureAppCheck() {
     throw Error(
       import.meta.env.DEV && env.VITE_APPCHECK_DEBUG === "true"
         ? "App Check debug verification failed. Register this browser's debug token from the developer console in Firebase App Check > Manage debug tokens for rufus-website-540cb, then retry. Your sign-in has not been changed."
-        : "App Check verification failed. Check the registered reCAPTCHA v3 site key and allowed domain in Firebase App Check. Your sign-in has not been changed.",
+        : "App Check verification failed. Check the registered reCAPTCHA Enterprise site key and allowed domain in Firebase App Check. Your sign-in has not been changed.",
       { cause },
     );
   }

@@ -25,7 +25,7 @@ these exact names under **rjsite → Settings → Environment Variables**:
 | `VITE_FIREBASE_STORAGE_BUCKET` | Existing Firebase web app configuration | Production; Preview when used |
 | `VITE_FIREBASE_MESSAGING_SENDER_ID` | Existing Firebase web app configuration | Production; Preview when used |
 | `VITE_FIREBASE_APP_ID` | Existing Firebase web app configuration | Production; Preview when used |
-| `VITE_APPCHECK_SITE_KEY` | Registered reCAPTCHA v3 **public site key** | Production; Preview when used |
+| `VITE_APPCHECK_SITE_KEY` | Registered reCAPTCHA Enterprise site key | Production; Preview when used |
 | `VITE_SITE_URL` | Actual public HTTPS site origin | Production; appropriate Preview origin if needed |
 
 The first seven are required for a working production application. `VITE_SITE_URL`
@@ -46,9 +46,8 @@ For local production validation, put the real public site key in the ignored
 npm --prefix storefront run build
 ```
 
-The initial local run passed TypeScript but stopped in Vite configuration with
-`Production build blocked: set VITE_APPCHECK_SITE_KEY to the registered reCAPTCHA
-v3 public site key, not a URL.` No substitute key or security bypass was added.
+The initial local run passed TypeScript but stopped in Vite configuration because
+`VITE_APPCHECK_SITE_KEY` was missing. No substitute key or security bypass was added.
 The storefront lockfile matches its package.json; no dependency changes are needed
 for the recorded Vercel error. The storefront's `.nvmrc` requests Node 22; the
 repository root and Vercel use Node 24. This mismatch did not cause the recorded
@@ -56,8 +55,8 @@ failure; validate with the deployment Node version before release.
 
 ## Production verification still required
 
-1. Confirm the web app matching `VITE_FIREBASE_APP_ID` has reCAPTCHA v3 registered
-   in Firebase App Check. Add the actual production hostname to the provider's
+1. Confirm the web app matching `VITE_FIREBASE_APP_ID` has reCAPTCHA Enterprise
+   registered in Firebase App Check. Add the actual production hostname to the provider's
    allowed domains and Firebase Authentication's authorized domains. Verify
    existing Storage CORS permits that origin where authenticated reads need it.
    These Firebase console settings have not been inspected or changed.

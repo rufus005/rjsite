@@ -16,7 +16,7 @@ All Firestore client writes are denied, including admin writes. Catalog/settings
 
 Guests authenticate anonymously without an account-registration screen. Storage receipts are tied to the anonymous UID and order. Owner/admin read uses authenticated `getBlob`, never `getDownloadURL`. The receipt cannot be replaced after creation. Public product/banner/QR images permit admin-only JPEG/PNG/WebP uploads below 5 MiB. Receipt upload has the same size/type restriction. A changed device can look up an order with its token but cannot upload a receipt without the original guest session.
 
-App Check is enforced on every callable outside the Functions emulator. Register the web app with reCAPTCHA v3, set `VITE_APPCHECK_SITE_KEY`, configure allowed domains, and enable enforcement for Firestore/Storage as appropriate in Firebase console after checking metrics. Never ship an App Check debug token. Emulator calls bypass App Check only through the emulator's environment flag. See https://firebase.google.com/docs/app-check/cloud-functions.
+App Check is enforced on every callable outside the Functions emulator. Register the web app with reCAPTCHA Enterprise, set `VITE_APPCHECK_SITE_KEY` to its site key, configure allowed domains, and enable enforcement for Firestore/Storage as appropriate in Firebase console after checking metrics. Never ship an App Check debug token. Emulator calls bypass App Check only through the emulator's environment flag. See https://firebase.google.com/docs/app-check/cloud-functions.
 
 Order creation rate limits are transaction-backed: 12 attempts per authenticated UID per hour, 30 per IP per hour; quotes 120 per UID/hour; lookup 80/IP/hour. App Check adds attestation but does not replace monitoring. Tune limits for your traffic. Configure TTL for `rateLimits.expiresAt` through the included indexes configuration, and add retention policies for private customer/receipt data consistent with approved policies. Idempotency keys are permanently retained in this implementation to avoid duplicate orders after late retries; define any future retention cutoff alongside checkout retry guarantees.
 
@@ -91,11 +91,10 @@ admin claim and, when enforced in the console, valid App Check. Do not relax rul
 
 1. Open https://console.firebase.google.com/project/rufus-website-540cb/appcheck
    and select the web app matching `VITE_FIREBASE_APP_ID` under Apps. This client
-   uses **reCAPTCHA v3**, not Enterprise.
-2. In https://www.google.com/recaptcha/admin select the corresponding v3 site and
-   copy its **site key**. Its matching **secret key** belongs only in the Firebase
-   App Check registration. If no registration exists, create a v3 registration
-   and register the matching secret in Firebase. Allow `rufus-website-540cb.web.app`,
+   uses **reCAPTCHA Enterprise**.
+2. In Google Cloud Console, select or create the corresponding reCAPTCHA Enterprise
+   site key and register it for this web app in Firebase App Check. Allow
+   `rufus-website-540cb.web.app`,
    `rufus-website-540cb.firebaseapp.com`, and your actual custom production domains.
 3. Set `VITE_APPCHECK_SITE_KEY=<public site key>` in
    `frontend/storefront/.env` (or the build environment). Check `.env.local`,
@@ -140,7 +139,7 @@ The debug path requires Vite development mode, the explicit boolean opt-in, and
 a loopback hostname. It uses Firebase's real debug-token exchange; it does not
 mint attestation, skip enforcement, or alter Auth/admin claims. A fail-closed
 custom provider permits debug initialization without a fabricated reCAPTCHA key.
-Production still uses the registered reCAPTCHA v3 key and the build rejects a
+Production still uses the registered reCAPTCHA Enterprise site key and the build rejects a
 missing key. `npm run build:emulators` verifies bundling for demo-rufus only and
 is not a deployable production configuration.
 
