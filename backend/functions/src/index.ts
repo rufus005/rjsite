@@ -15,10 +15,10 @@ import { renderPage, sitemap } from "./render.js";
 initializeApp();
 const db = getFirestore();
 const service = new StoreService(db);
-const emulator = process.env.FUNCTIONS_EMULATOR === "true";
 const options = {
   region: "us-central1",
-  enforceAppCheck: !emulator,
+  // Authorization is enforced by the auth/admin helpers below.
+  enforceAppCheck: false,
   maxInstances: 10,
 };
 function admin(req: CallableRequest) {

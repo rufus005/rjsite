@@ -37,7 +37,11 @@ const app = initializeApp({
 });
 // Register App Check before creating clients that consume its tokens.
 let appCheck: AppCheck | undefined;
-if (!isEmulator && typeof window !== "undefined") {
+if (
+  import.meta.env.VITE_ENABLE_APPCHECK === "true" &&
+  !isEmulator &&
+  typeof window !== "undefined"
+) {
   const key = import.meta.env.VITE_APPCHECK_SITE_KEY?.trim();
   const debugToken = import.meta.env.VITE_APPCHECK_DEBUG_TOKEN?.trim();
   const debugGlobal = self as typeof self & {

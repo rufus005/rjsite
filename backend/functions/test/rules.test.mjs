@@ -153,3 +153,36 @@ test("receipt is owner-upload only and private, immutable, admin readable", asyn
   await assertSucceeds(getBytes(ref(owner, path)));
   await assertSucceeds(getBytes(ref(admin, path)));
 });
+
+test("admin banner/product uploads work without App Check, including nested paths", async () => {
+  const admin = env
+    .authenticatedContext("store-admin", {
+      admin: true,
+      email: "rufus090420@gmail.com",
+    })
+    .storage();
+  const customer = env.authenticatedContext("customer").storage();
+  for (const path of [
+    "public/banners/banner.png",
+    "public/banners/home/banner.png",
+    "public/products/item/main.webp",
+  ]) {
+    await assertSucceeds(
+      uploadBytes(ref(admin, path), new Uint8Array([1, 2]), {
+        contentType: "image/png",
+      }),
+    );
+    await assertFails(
+      uploadBytes(ref(customer, path), new Uint8Array([3]), {
+        contentType: "image/png",
+      }),
+    );
+    await assertFails(
+      uploadBytes(
+        ref(env.unauthenticatedContext().storage(), path),
+        new Uint8Array([3]),
+        { contentType: "image/png" },
+      ),
+    );
+  }
+});

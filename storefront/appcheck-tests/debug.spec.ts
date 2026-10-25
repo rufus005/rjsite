@@ -6,12 +6,13 @@ async function intercept(
   page: Page,
   options: {
     siteKey?: string;
+    enabled?: string;
     debugToken?: string;
     production?: boolean;
     initializationFailure?: boolean;
   } = {},
 ) {
-  const requests = { exchanges: 0, signIns: 0 };
+  const requests = { exchanges: 0, signIns: 0, attestation: 0 };
   // Keep all Firebase traffic isolated from the live project.
   await page.route("**/*", async (route) => {
     const url = new URL(route.request().url());
@@ -21,6 +22,10 @@ async function intercept(
       if (url.pathname === "/src/services/firebase/index.ts") {
         let body = await response.text();
         body = body
+          .replace(
+            /import\.meta\.env\.VITE_ENABLE_APPCHECK/g,
+            JSON.stringify(options.enabled ?? "true"),
+          )
           .replace(
             /import\.meta\.env\.VITE_APPCHECK_SITE_KEY/g,
             JSON.stringify(options.siteKey ?? ""),
@@ -41,6 +46,7 @@ async function intercept(
       }
       return route.fulfill({ response });
     }
+    if (/firebaseappcheck|recaptcha/.test(url.href)) requests.attestation++;
     if (url.pathname.endsWith(":exchangeDebugToken")) {
       requests.exchanges++;
       expect(route.request().postDataJSON().debug_token).toBe(debugToken);
@@ -153,3 +159,21 @@ test("rejected debug exchange does not block admin rendering", async ({
   await expect.poll(() => requests.exchanges).toBeGreaterThan(0);
   await expectSignInAvailable(page);
 });
+
+for (const enabled of ["", "false"]) {
+  test(`App Check opt-out sends no attestation requests (${enabled || "unset"})`, async ({
+    page,
+  }) => {
+    const requests = await intercept(page, {
+      enabled,
+      siteKey: "mismatched-enterprise-site-key",
+    });
+    await page.goto("http://rufus.vercel.app:5175/admin");
+    await expectSignInAvailable(page);
+    await page.getByLabel("Email", { exact: true }).fill("admin@example.com");
+    await page.getByLabel("Password", { exact: true }).fill("test-password");
+    await page.getByRole("button", { name: "Sign in", exact: true }).click();
+    await expect.poll(() => requests.signIns).toBe(1);
+    expect(requests.attestation).toBe(0);
+  });
+}

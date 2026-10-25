@@ -16,7 +16,13 @@ All Firestore client writes are denied, including admin writes. Catalog/settings
 
 Guests authenticate anonymously without an account-registration screen. Storage receipts are tied to the anonymous UID and order. Owner/admin read uses authenticated `getBlob`, never `getDownloadURL`. The receipt cannot be replaced after creation. Public product/banner/QR images permit admin-only JPEG/PNG/WebP uploads below 5 MiB. Receipt upload has the same size/type restriction. A changed device can look up an order with its token but cannot upload a receipt without the original guest session.
 
-App Check is enforced on every callable outside the Functions emulator. Register the web app with reCAPTCHA Enterprise, set `VITE_APPCHECK_SITE_KEY` to its site key, configure allowed domains, and enable enforcement for Firestore/Storage as appropriate in Firebase console after checking metrics. Never ship an App Check debug token. Emulator calls bypass App Check only through the emulator's environment flag. See https://firebase.google.com/docs/app-check/cloud-functions.
+App Check is optional. All callable functions set `enforceAppCheck: false`;
+admin operations still require Firebase Authentication with the `admin: true`
+custom claim. The frontend initializes attestation only when
+`VITE_ENABLE_APPCHECK=true`. Leave it unset or false on Vercel to avoid
+reCAPTCHA token exchanges. Storage and Firestore App Check enforcement must
+also be **unenforced** in Firebase Console for clients without attestation.
+Security rules and callable authorization continue to apply.
 
 Order creation rate limits are transaction-backed: 12 attempts per authenticated UID per hour, 30 per IP per hour; quotes 120 per UID/hour; lookup 80/IP/hour. App Check adds attestation but does not replace monitoring. Tune limits for your traffic. Configure TTL for `rateLimits.expiresAt` through the included indexes configuration, and add retention policies for private customer/receipt data consistent with approved policies. Idempotency keys are permanently retained in this implementation to avoid duplicate orders after late retries; define any future retention cutoff alongside checkout retry guarantees.
 
@@ -84,50 +90,31 @@ Manual local expiry: `FIRESTORE_EMULATOR_HOST=127.0.0.1:8080 node scripts/expire
 
 ## Admin CRUD / App Check recovery
 
-Admin Auth and App Check are independent. `saveProduct` enforces App Check before
-executing the admin-claim check; an invalid attestation can therefore return 401
-while the UI correctly shows a signed-in administrator. Storage also requires the
-admin claim and, when enforced in the console, valid App Check. Do not relax rules.
+1. Deploy the updated Functions and rules to `rufus-website-540cb` after reviewing
+   the changes: `firebase deploy --project rufus-website-540cb --only functions,storage,firestore:rules`
+   from `frontend/backend`.
+2. In Firebase Console → App Check → APIs, set Cloud Storage and Cloud Firestore
+   to **unenforced** (and Authentication if enforcement was enabled there).
+   This console setting is separate from security rules; deploying rules cannot
+   disable service-level attestation enforcement.
+3. On Vercel, leave `VITE_ENABLE_APPCHECK` unset or set it to `false`, then rebuild
+   and redeploy the storefront. A site key alone no longer enables App Check.
+4. Admin access uses the `admin: true` custom claim, not the login form's email
+   default. If `rufus090420@gmail.com` lacks it, an authorized operator with ADC
+   can run `GOOGLE_CLOUD_PROJECT=rufus-website-540cb npm run admin -- rufus090420@gmail.com`
+   from `frontend/backend`. Sign out and sign in afterward to refresh claims.
+5. Verify banner/product image upload and Save in Admin Settings. PNG/JPEG/WebP
+   images must be under 5 MiB. Non-admin uploads and direct Firestore writes
+   remain denied. Emulator tests do not verify live Console settings.
 
-1. Open https://console.firebase.google.com/project/rufus-website-540cb/appcheck
-   and select the web app matching `VITE_FIREBASE_APP_ID` under Apps. This client
-   uses **reCAPTCHA Enterprise**.
-2. In Google Cloud Console, select or create the corresponding reCAPTCHA Enterprise
-   site key and register it for this web app in Firebase App Check. Allow
-   `rufus-website-540cb.web.app`,
-   `rufus-website-540cb.firebaseapp.com`, and your actual custom production domains.
-3. Set `VITE_APPCHECK_SITE_KEY=<public site key>` in
-   `frontend/storefront/.env` (or the build environment). Check `.env.local`,
-   `.env.production`, `.env.production.local` and CI overrides for stale values.
-   A Realtime Database URL, Firebase API key, app ID, or reCAPTCHA secret is not
-   a site key. Restart Vite after changing env; production values are baked in
-   by `npm --prefix frontend/storefront run build`.
-4. Keep enforcement enabled. Test production attestation on an allowed domain;
-   localhost browser/emulator tests do not prove real reCAPTCHA attestation.
-   For localhost against production, follow Firebase's registered debug-provider
-   workflow; never publish a debug token or put one in a production build.
-5. Verify create, edit, PNG/JPEG/WebP upload, and published product visibility in
-   a signed-out browser. Drafts must stay hidden. Verify non-admin uploads and
-   direct Firestore writes are denied. The local integration regression covers
-   these operations using `demo-rufus`; it does not validate deployed rules.
-6. Only after a valid key, a production build, and live verification pass, use
-   `backend/node_modules/.bin/firebase deploy --config backend/firebase.json --project rufus-website-540cb --only hosting`
-   from the workspace root. Do not seed, replace admin accounts, or deploy rules
-   or Functions as part of this Hosting-only repair.
-
-**Hosting constraint:** application HTML currently comes from the deployed
-`storefront` Function, including its build-specific asset filenames. Hosting-only
-publishing cannot update that Function's HTML template. Before deployment, verify
-that the served template references the intended new assets; if it references old
-hashes, stop. Updating that template requires a separately authorized Functions
-release or an explicitly reviewed change to client-rendered Hosting routing.
-The workspace `backend` path is a symlink to `frontend/backend` on the host.
-The existing relative paths intentionally resolve within `frontend`; preserve them.
+To opt in later, register the reCAPTCHA Enterprise key in Firebase App Check,
+allow the actual Vercel/custom domain, set `VITE_APPCHECK_SITE_KEY`, and explicitly
+set `VITE_ENABLE_APPCHECK=true`. Validate attestation before enabling enforcement.
 
 ### Local debug provider (live Firebase, development only)
 
 Set `VITE_APPCHECK_DEBUG_TOKEN=<registered debug token>` in
-`frontend/storefront/.env.development.local`, along with the registered
+`frontend/storefront/.env.development.local`, along with `VITE_ENABLE_APPCHECK=true` and the registered
 `VITE_APPCHECK_SITE_KEY`, then run `npm --prefix frontend/storefront run dev`.
 Open `http://localhost:5173`. Debug mode requires that exact hostname, a Vite
 development build, and an explicitly configured token. It is disabled on
