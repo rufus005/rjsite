@@ -100,6 +100,21 @@ test("admin can read restricted data but trusted mutations require backend", asy
   );
   await assertFails(updateDoc(doc(db, "products/public"), { stock: 100 }));
 });
+test("the store owner email can read admin data without a custom claim", async () => {
+  const db = env
+    .authenticatedContext("store-owner", { email: "rufus090420@gmail.com" })
+    .firestore();
+  for (const path of [
+    "products/draft",
+    "settings/private",
+    "orders/order1",
+    "audit/log",
+  ])
+    await assertSucceeds(getDoc(doc(db, path)));
+  await assertFails(
+    updateDoc(doc(db, "products/public"), { stock: 100 }),
+  );
+});
 test("Storage image rules reject non-admin uploads, invalid MIME and oversized images", async () => {
   const publicStorage = env.unauthenticatedContext().storage(),
     admin = env.authenticatedContext("admin", { admin: true }).storage();
@@ -185,4 +200,17 @@ test("admin banner/product uploads work without App Check, including nested path
       ),
     );
   }
+});
+test("the store owner email can upload and delete images without a custom claim", async () => {
+  const storage = env
+    .authenticatedContext("store-owner", { email: "rufus090420@gmail.com" })
+    .storage();
+  const image = ref(storage, "public/products/owner.png");
+  await assertSucceeds(
+    uploadBytes(image, new Uint8Array([1, 2]), {
+      contentType: "image/png",
+    }),
+  );
+  const { deleteObject } = await import("firebase/storage");
+  await assertSucceeds(deleteObject(image));
 });

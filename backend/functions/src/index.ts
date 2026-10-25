@@ -19,10 +19,15 @@ const options = {
   region: "us-central1",
   // Authorization is enforced by the auth/admin helpers below.
   enforceAppCheck: false,
+  consumeAppCheckToken: false,
   maxInstances: 10,
 };
+const adminEmail = "rufus090420@gmail.com";
 function admin(req: CallableRequest) {
-  if (req.auth?.token.admin !== true)
+  if (
+    req.auth?.token.admin !== true &&
+    req.auth?.token.email !== adminEmail
+  )
     throw new HttpsError(
       "permission-denied",
       "Administrator access is required.",

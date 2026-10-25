@@ -16,9 +16,11 @@ All Firestore client writes are denied, including admin writes. Catalog/settings
 
 Guests authenticate anonymously without an account-registration screen. Storage receipts are tied to the anonymous UID and order. Owner/admin read uses authenticated `getBlob`, never `getDownloadURL`. The receipt cannot be replaced after creation. Public product/banner/QR images permit admin-only JPEG/PNG/WebP uploads below 5 MiB. Receipt upload has the same size/type restriction. A changed device can look up an order with its token but cannot upload a receipt without the original guest session.
 
-App Check is optional. All callable functions set `enforceAppCheck: false`;
-admin operations still require Firebase Authentication with the `admin: true`
-custom claim. The frontend initializes attestation only when
+App Check is optional. Callable functions set `enforceAppCheck: false` and
+`consumeAppCheckToken: false`; the public storefront HTTP function does not
+enforce App Check. Admin operations require Firebase Authentication and accept
+either the `admin: true` custom claim or the owner account
+`rufus090420@gmail.com`. The frontend initializes attestation only when
 `VITE_ENABLE_APPCHECK=true`. Leave it unset or false on Vercel to avoid
 reCAPTCHA token exchanges. Storage and Firestore App Check enforcement must
 also be **unenforced** in Firebase Console for clients without attestation.

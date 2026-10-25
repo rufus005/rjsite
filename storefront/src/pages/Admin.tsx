@@ -12,6 +12,7 @@ import {
   call,
   db,
   storage,
+  isAdminUser,
   prepareAdminRequest,
   ensureAppCheck,
 } from "../services/firebase";
@@ -69,8 +70,7 @@ export default function Admin() {
     () =>
       onIdTokenChanged(auth, async (u) => {
         try {
-          const allowed =
-            !!u && (await u.getIdTokenResult()).claims.admin === true;
+          const allowed = !!u && (await isAdminUser(u));
           if (auth.currentUser !== u) return;
           setIsAdmin(allowed);
         } catch (e) {
@@ -153,11 +153,10 @@ export default function Admin() {
             setBusy(true);
             try {
               const u = await signInWithEmailAndPassword(auth, email, password);
-              const token = await u.user.getIdTokenResult(true);
-              if (token.claims.admin !== true) {
+              if (!(await isAdminUser(u.user, true))) {
                 await signOut(auth);
                 throw Error(
-                  "This account does not have an administrator claim. Contact the store owner.",
+                  "This account is not authorized as an administrator. Contact the store owner.",
                 );
               }
             } catch (e) {
