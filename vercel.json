@@ -3,5 +3,11 @@
   "framework": "vite",
   "installCommand": "npm --prefix storefront ci",
   "buildCommand": "npm --prefix storefront run build",
-  "outputDirectory": "storefront/dist"
+  "outputDirectory": "storefront/dist",
+  "rewrites": [
+    {
+      "source": "/((?!assets/|.*\\..*).*)",
+      "destination": "/index.html"
+    }
+  ]
 }
