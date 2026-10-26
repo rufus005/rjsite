@@ -47,10 +47,10 @@ test.beforeAll(async ({ request }) => {
   await b.commit();
   // The emulator announces routes before workers have loaded. Warm each worker
   // explicitly so UI assertions measure application behavior, not disk-bound
-  // cold starts. These requests are unauthenticated and must be denied.
+  // cold starts. Invalid unauthenticated payloads must be rejected.
   for (const [name, status] of Object.entries({
-    quoteOrder: 401,
-    createOrder: 401,
+    quoteOrder: 400,
+    createOrder: 400,
     lookupOrder: 400,
     cancelOrder: 400,
     attachReceipt: 400,
@@ -168,7 +168,9 @@ test("guest COD checkout, secure lookup, safe cancellation", async ({
   await expect(page.locator(".order-status")).toContainText("unpaid");
   const url = page.url();
   const id = url.split("/order/")[1].split("#")[0];
-  expect((await db.doc("orders/" + id).get()).data().total).toBe(364700);
+  const order = (await db.doc("orders/" + id).get()).data();
+  expect(order.total).toBe(364700);
+  expect(order.ownerUid).toBe("");
   await page.screenshot({
     path: "test-results/order-desktop.png",
     fullPage: true,

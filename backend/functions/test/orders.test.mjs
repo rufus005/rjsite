@@ -70,6 +70,14 @@ test("authoritative paise totals, COD fee, pending manual verification and opaqu
   assert.equal(order.ownerUid, undefined);
   await assert.rejects(service.lookup(result.id, "x".repeat(64)));
 });
+test("guest order placement works without an authenticated user", async () => {
+  const input = await payload();
+  const result = await service.create(input, null);
+  const order = await service.lookup(result.id, result.token);
+  assert.equal(order.total, input.expectedTotal);
+  assert.equal((await db.doc("orders/" + result.id).get()).data().ownerUid, "");
+  assert.equal(await stock(), 7);
+});
 test("rejects tampered totals, unexpected trusted fields, negative quantities, duplicate lines", async () => {
   const input = await payload();
   await assert.rejects(service.create({ ...input, expectedTotal: 1 }, "guest"));

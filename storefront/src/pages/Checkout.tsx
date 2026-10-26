@@ -163,10 +163,7 @@ export default function Checkout() {
     setQuote(null);
     setError("");
     if (!cart.length) return;
-    guest()
-      .then(() =>
-        call<Quote>("quoteOrder", { items: cart, paymentMethod: method }),
-      )
+    call<Quote>("quoteOrder", { items: cart, paymentMethod: method })
       .then((q) => {
         if (active) setQuote(q);
       })
@@ -189,7 +186,16 @@ export default function Checkout() {
           !["image/jpeg", "image/png", "image/webp"].includes(receipt.type))
       )
         throw Error("Receipt must be a JPEG, PNG or WebP image under 5 MB.");
-      const user = await guest();
+      let receiptUid: string | null = null;
+      let uploadError = "";
+      if (receipt && method === "upi") {
+        try {
+          receiptUid = (await guest()).uid;
+        } catch {
+          uploadError =
+            "Your order can still be placed, but the receipt could not be uploaded. You can share it with the store after checkout.";
+        }
+      }
       const payload = {
         items: cart,
         paymentMethod: method,
@@ -219,18 +225,19 @@ export default function Checkout() {
         reference: string;
       }>("createOrder", { ...payload, idempotencyKey });
       sessionStorage.setItem("rufus-last-order", JSON.stringify(result));
-      let uploadError = "";
       if (receipt && method === "upi") {
-        try {
-          await uploadBytes(
-            ref(storage, `receipts/${user.uid}/${result.id}/receipt`),
-            receipt,
-            { contentType: receipt.type },
-          );
-          await call("attachReceipt", { id: result.id });
-        } catch {
-          uploadError =
-            "Your order was created, but the receipt upload failed. You can retry below.";
+        if (receiptUid) {
+          try {
+            await uploadBytes(
+              ref(storage, `receipts/${receiptUid}/${result.id}/receipt`),
+              receipt,
+              { contentType: receipt.type },
+            );
+            await call("attachReceipt", { id: result.id });
+          } catch {
+            uploadError =
+              "Your order was created, but the receipt upload failed. You can retry below.";
+          }
         }
       }
       setCart([]);

@@ -13,6 +13,8 @@ export function errorMessage(e: unknown): string {
     code === "auth/operation-not-allowed"
   )
     return "Firebase Authentication is not configured for this sign-in method. Enable Email/Password in the Firebase console for rufus-website-540cb.";
+  if (code === "auth/admin-restricted-operation")
+    return "Firebase Authentication is restricted for this operation. Guest checkout can still continue, but this optional upload needs an enabled sign-in method.";
   if (code === "auth/invalid-credential")
     return "The email or password is incorrect.";
   if (code === "auth/network-request-failed")

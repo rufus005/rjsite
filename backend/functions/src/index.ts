@@ -62,15 +62,15 @@ function callable(fn: (r: CallableRequest) => Promise<unknown>) {
   });
 }
 export const quoteOrder = callable(async (r) => {
-  const uid = user(r);
-  await service.rate("quote:" + uid, 120);
+  await service.rate("quote:" + (r.auth?.uid ?? r.rawRequest.ip), 120);
   return service.quote(r.data);
 });
 export const createOrder = callable(async (r) => {
-  const uid = user(r);
-  await service.rate("orders:uid:" + uid, 12);
+  const uid = r.auth?.uid ?? null;
+  const rateLimitId = uid ?? r.rawRequest.ip;
+  await service.rate("orders:uid:" + rateLimitId, 12);
   await service.rate("orders:ip:" + r.rawRequest.ip, 30);
-  return service.create(r.data, uid);
+  return service.create(r.data, uid, rateLimitId);
 });
 export const lookupOrder = callable(async (r) => {
   await service.rate("lookup:" + r.rawRequest.ip, 80);

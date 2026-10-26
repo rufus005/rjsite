@@ -101,9 +101,15 @@ export class StoreService {
       settingsSchema.parse(s.data()),
     );
   }
-  async create(raw: unknown, uid: string) {
+  async create(
+    raw: unknown,
+    uid: string | null,
+    idempotencyScope = uid ?? "guest",
+  ) {
     const data = orderSchema.parse(raw),
-      idem = this.db.doc(`idempotency/${hash(uid + data.idempotencyKey)}`),
+      idem = this.db.doc(
+        `idempotency/${hash(idempotencyScope + data.idempotencyKey)}`,
+      ),
       fingerprint = hash(JSON.stringify(data));
     const orderRef = this.db.collection("orders").doc(),
       token = randomBytes(32).toString("hex");
@@ -159,7 +165,7 @@ export class StoreService {
       const order = {
         id: orderRef.id,
         reference: `RUF-${orderRef.id.slice(0, 10).toUpperCase()}`,
-        ownerUid: uid,
+        ownerUid: uid ?? "",
         tokenHash: hash(token),
         buyer: data.buyer,
         ...priced,
