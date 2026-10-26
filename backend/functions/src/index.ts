@@ -62,7 +62,7 @@ function callable(fn: (r: CallableRequest) => Promise<unknown>) {
   });
 }
 export const quoteOrder = callable(async (r) => {
-  await service.rate("quote:" + (r.auth?.uid ?? r.rawRequest.ip), 120);
+  await service.rate("quote:ip:" + r.rawRequest.ip, 120);
   return service.quote(r.data);
 });
 export const createOrder = callable(async (r) => {
