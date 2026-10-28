@@ -1,5 +1,15 @@
 # Changelog
 
+## [6.8.0](https://github.com/rufus005/rjsite/compare/rea-agents-6.7.0...rea-agents-6.8.0) (2026-10-28)
+
+
+### Bug Fixes
+
+* allow admin email and disable App Check enforcement on admin functions and storage ([3e65794](https://github.com/rufus005/rjsite/commit/3e657946c269c3f86f83993e72b4710e4bd6968e))
+* disable strict App Check enforcement so admin saveSettings and storage uploads work ([f228711](https://github.com/rufus005/rjsite/commit/f228711141810ce18a78be7a62aedbecacc42e4e))
+* target storefront in Vercel builds ([58f02b6](https://github.com/rufus005/rjsite/commit/58f02b692c0b98d9b72e44600423dcddaa3ebd67))
+* use ReCaptchaEnterpriseProvider and disable debug token on Vercel ([9018444](https://github.com/rufus005/rjsite/commit/901844467d45dae48dd7bbcc3b7129b9f486aa05))
+
 ## [6.7.0](https://github.com/morluto/rea/compare/rea-agents-6.6.0...rea-agents-6.7.0) (2026-10-18)
 
 ### Highlights
