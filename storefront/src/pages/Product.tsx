@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { Link, useParams } from "react-router-dom";
 import {
   Check,
@@ -12,14 +12,18 @@ import { useStore } from "../context/Store";
 import { money } from "../utils/format";
 import { useMeta } from "../hooks/useMeta";
 import ProductCard from "../components/ProductCard";
+import CartDrawer from "../components/CartDrawer";
 export default function ProductPage() {
   const { slug } = useParams();
   const { products, loading, settings, add, cart } = useStore();
   const p = products.find((p) => p.slug === slug);
+  const closeCart = useCallback(() => setCartOpen(false), []);
   const [variantId, setVariantId] = useState(""),
     [image, setImage] = useState(0),
     [quantity, setQuantity] = useState(1),
-    [added, setAdded] = useState(false);
+    [added, setAdded] = useState(false),
+    [cartOpen, setCartOpen] = useState(false);
+  const addButtonRef = useRef<HTMLButtonElement>(null);
   const touch = useRef(0);
   const v = p?.variants.find((v) => v.id === variantId) || p?.variants[0];
   useEffect(() => {
@@ -27,6 +31,7 @@ export default function ProductPage() {
     setImage(0);
     setQuantity(1);
     setAdded(false);
+    setCartOpen(false);
   }, [slug]);
   useMeta(
     p
@@ -202,6 +207,7 @@ export default function ProductPage() {
                     setImage(0);
                     setQuantity(1);
                     setAdded(false);
+                    setCartOpen(false);
                   }}
                 >
                   {variant.name}
@@ -226,22 +232,24 @@ export default function ProductPage() {
               />
             </label>
             <button
+              ref={addButtonRef}
               className="button"
               disabled={!max}
               onClick={() => {
                 add(p, v.id, quantity);
                 setAdded(true);
+                setCartOpen(true);
               }}
             >
               {added ? <Check size={18} /> : <ShoppingBag size={18} />}{" "}
               {max ? "Add to cart" : "Cart limit reached / unavailable"}
             </button>
           </div>
-          {added && (
-            <p role="status">
-              Added to your cart. <Link to="/cart">View cart →</Link>
-            </p>
-          )}
+          <CartDrawer
+            open={cartOpen}
+            onClose={closeCart}
+            triggerRef={addButtonRef}
+          />
           {p.warrantyApproved && p.warranty && (
             <p className="warranty">
               <Check size={16} /> {p.warranty}

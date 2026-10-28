@@ -8,6 +8,9 @@ import {
 import { useStore } from "../context/Store";
 import { useMeta } from "../hooks/useMeta";
 import ProductCard from "../components/ProductCard";
+const normalizeCategory = (category: string) =>
+  category.toLowerCase().replace(/[\s-]/g, "");
+
 export function Home() {
   const { products, loading, settings } = useStore();
   useMeta(
@@ -166,6 +169,14 @@ export function Shop() {
   const [params, setParams] = useSearchParams();
   const search = params.get("q") || "",
     category = params.get("category") || "",
+    normalizedCategory = normalizeCategory(category),
+    allCategories = !normalizedCategory || normalizedCategory === "all",
+    selectedCategory = allCategories
+      ? ""
+      : (products.find(
+          (product) =>
+            normalizeCategory(product.category) === normalizedCategory,
+        )?.category ?? category),
     brand = params.get("brand") || "",
     color = params.get("color") || "",
     size = params.get("size") || "",
@@ -191,7 +202,8 @@ export function Shop() {
           `${p.name} ${p.category} ${p.brand} ${p.description}`
             .toLowerCase()
             .includes(search.toLowerCase())) &&
-        (!category || p.category === category) &&
+        (allCategories ||
+          normalizeCategory(p.category) === normalizedCategory) &&
         (!brand || p.brand === brand) &&
         p.variants.some(
           (v) =>
@@ -240,7 +252,7 @@ export function Shop() {
             [
               "Category",
               "category",
-              category,
+              selectedCategory,
               [...new Set(products.map((p) => p.category))],
             ],
             [

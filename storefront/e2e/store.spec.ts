@@ -90,7 +90,10 @@ async function addItem(page: any, slug = "the-entryway") {
     page.getByRole("button", { name: "Add to cart", exact: true }),
   ).toBeVisible();
   await page.getByRole("button", { name: "Add to cart", exact: true }).click();
-  await page.goto("/checkout");
+  const drawer = page.getByRole("dialog", { name: "Your cart" });
+  await expect(drawer).toBeVisible();
+  await expect(drawer).toContainText("Subtotal");
+  await drawer.getByRole("link", { name: "Checkout" }).click();
   await expect(
     page.getByRole("heading", { name: "Order summary" }),
   ).toBeVisible();
@@ -142,6 +145,12 @@ test("catalog routes, filters, variants, quantity and cart persistence", async (
   await expect(page.locator(".detail-price")).toContainText("3,599");
   await page.getByLabel("Quantity", { exact: true }).fill("2");
   await page.getByRole("button", { name: "Add to cart", exact: true }).click();
+  const drawer = page.getByRole("dialog", { name: "Your cart" });
+  await expect(drawer).toContainText("The Entryway");
+  await expect(drawer).toContainText("Midnight");
+  await expect(drawer).toContainText("₹7,198");
+  await drawer.getByRole("button", { name: "Continue Shopping" }).click();
+  await expect(drawer).toBeHidden();
   await page.goto("/cart");
   await page.reload();
   await expect(page.getByRole("spinbutton")).toHaveValue("2");

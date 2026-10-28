@@ -41,8 +41,8 @@ export default function Layout() {
           className={menu ? "navigation open" : "navigation"}
           aria-label="Main"
         >
-          <NavLink to="/shop">Shop all</NavLink>
-          <Link to="/shop?category=Slim+shoe+racks">Shoe racks</Link>
+          <NavLink to={{ pathname: "/shop", search: "" }}>Shop all</NavLink>
+          <Link to="/shop?category=slim-shoe-racks">Shoe racks</Link>
           <Link to="/shop?category=Storage+cabinets">Home storage</Link>
           <NavLink to="/about">Our story</NavLink>
         </nav>
