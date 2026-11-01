@@ -16,7 +16,6 @@ export default defineConfig(({ mode }) => {
                 id.includes("/firebase/firestore/")
               )
                 return "firebase-firestore";
-              if (id.includes("firebase")) return "firebase-core";
               if (id.includes("react")) return "react-vendor";
             }
           },

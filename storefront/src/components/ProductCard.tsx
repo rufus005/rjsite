@@ -2,17 +2,21 @@ import { Link } from "react-router-dom";
 import { ArrowUpRight } from "lucide-react";
 import type { Product } from "../types";
 import { money } from "../utils/format";
+import { ResponsiveImg } from "../utils/images";
 export default function ProductCard({ product: p }: { product: Product }) {
   const v = p.variants.reduce((a, b) => (a.price < b.price ? a : b));
   return (
     <article className="product-card">
       <Link to={"/product/" + p.slug} className="product-picture">
-        <img
-          src={p.images[0] || "/images/social.svg"}
+        <ResponsiveImg
+          src={p.images[0] || "/images/social-zak.svg"}
+          responsiveImages={p.responsiveImages}
+          sizes="(max-width: 760px) 85vw, (max-width: 1100px) 42vw, 22vw"
           alt={p.name}
           width="600"
           height="560"
           loading="lazy"
+          decoding="async"
         />
         <span className="tag">
           {p.sample ? "SAMPLE COLLECTION" : p.category}

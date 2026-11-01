@@ -13,6 +13,23 @@ const image = text
         v.startsWith("http://127.0.0.1:9199/v0/b/demo-rufus.appspot.com/o/")),
     "Use an HTTPS image URL or local /images/ path",
   );
+const responsiveImage = z
+  .object({
+    src: image,
+    variants: z
+      .array(
+        z
+          .object({
+            src: image,
+            width: z.number().int().min(1).max(4000),
+          })
+          .strict(),
+      )
+      .min(1)
+      .max(3),
+  })
+  .strict();
+const responsiveImages = z.array(responsiveImage).max(12);
 export const productSchema = z
   .object({
     id,
@@ -26,6 +43,7 @@ export const productSchema = z
     published: z.boolean(),
     sample: z.boolean().default(false),
     images: z.array(image).max(12),
+    responsiveImages: responsiveImages.optional(),
     specifications: z.record(text.max(80), text.max(300)),
     warranty: text.max(500).default("1-Year Warranty"),
     warrantyApproved: z.boolean().default(false),
@@ -43,6 +61,7 @@ export const productSchema = z
           originalPrice: money,
           stock: z.number().int().min(0).max(100000),
           images: z.array(image).max(12),
+          responsiveImages: responsiveImages.optional(),
         }),
       )
       .min(1)
@@ -69,6 +88,7 @@ export const settingsSchema = z
     address: text.max(500),
     banner: text.max(250),
     bannerImage: z.union([z.literal(""), image]),
+    bannerResponsiveImage: responsiveImage.optional(),
     siteUrl: text.url(),
     shippingFee: money,
     cod: z.object({

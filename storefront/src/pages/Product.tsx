@@ -13,6 +13,9 @@ import { money } from "../utils/format";
 import { useMeta } from "../hooks/useMeta";
 import ProductCard from "../components/ProductCard";
 import CartDrawer from "../components/CartDrawer";
+import { BRAND_SITE_URL, brandedTitle } from "../utils/brand";
+import { ResponsiveImg } from "../utils/images";
+import { trackProductView } from "../services/marketing";
 export default function ProductPage() {
   const { slug } = useParams();
   const { products, loading, settings, add, cart } = useStore();
@@ -33,9 +36,15 @@ export default function ProductPage() {
     setAdded(false);
     setCartOpen(false);
   }, [slug]);
+  const viewedProductId = useRef("");
+  useEffect(() => {
+    if (!p || viewedProductId.current === p.id) return;
+    viewedProductId.current = p.id;
+    trackProductView(p, p.variants[0].price);
+  }, [p]);
   useMeta(
     p
-      ? (p.seo.title || p.name) + " | Rufus"
+      ? brandedTitle(p.seo.title || p.name)
       : loading
         ? "Loading product…"
         : "Product not found",
@@ -54,6 +63,7 @@ export default function ProductPage() {
       description: p.description,
       image: p.images,
       sku: p.sku,
+      brand: { "@type": "Brand", name: p.brand },
       offers: {
         "@type": "AggregateOffer",
         priceCurrency: "INR",
@@ -63,16 +73,16 @@ export default function ProductPage() {
         availability:
           "https://schema.org/" +
           (p.variants.some((v) => v.stock > 0) ? "InStock" : "OutOfStock"),
-        url: settings.siteUrl + "/product/" + p.slug,
+        url: BRAND_SITE_URL + "/product/" + p.slug,
       },
     });
     document.head.appendChild(script);
-    const photo = p.images[0] || "/images/social.svg";
+    const photo = p.images[0] || "/images/social-zak.svg";
     document
       .querySelector('meta[property="og:image"]')
       ?.setAttribute(
         "content",
-        photo.startsWith("/") ? settings.siteUrl + photo : photo,
+        photo.startsWith("/") ? BRAND_SITE_URL + photo : photo,
       );
     const crumb = document.createElement("script");
     crumb.type = "application/ld+json";
@@ -84,13 +94,13 @@ export default function ProductPage() {
           "@type": "ListItem",
           position: 1,
           name: "Shop",
-          item: settings.siteUrl + "/shop",
+          item: BRAND_SITE_URL + "/shop",
         },
         {
           "@type": "ListItem",
           position: 2,
           name: p.name,
-          item: settings.siteUrl + "/product/" + p.slug,
+          item: BRAND_SITE_URL + "/product/" + p.slug,
         },
       ],
     });
@@ -114,6 +124,9 @@ export default function ProductPage() {
       </div>
     );
   const images = v.images.length ? v.images : p.images;
+  const responsiveImages = v.images.length
+    ? v.responsiveImages
+    : p.responsiveImages;
   const inCart =
     cart.find((l) => l.productId === p.id && l.variantId === v.id)?.quantity ||
     0;
@@ -137,11 +150,15 @@ export default function ProductPage() {
               if (Math.abs(diff) > 50) move(diff < 0 ? 1 : -1);
             }}
           >
-            <img
-              src={images[image] || p.images[0] || "/images/social.svg"}
+            <ResponsiveImg
+              src={images[image] || p.images[0] || "/images/social-zak.svg"}
+              responsiveImages={responsiveImages}
+              sizes="(max-width: 760px) 100vw, 50vw"
               width="600"
               height="560"
               alt={`${p.name} — ${v.name}, view ${image + 1}`}
+              fetchPriority="high"
+              decoding="async"
             />
             {images.length > 1 && (
               <div className="gallery-controls">
@@ -165,7 +182,16 @@ export default function ProductPage() {
                 aria-pressed={i === image}
                 onClick={() => setImage(i)}
               >
-                <img src={src} width="80" height="80" alt="" />
+                <ResponsiveImg
+                  src={src}
+                  responsiveImages={responsiveImages}
+                  sizes="80px"
+                  width="80"
+                  height="80"
+                  loading="lazy"
+                  decoding="async"
+                  alt=""
+                />
               </button>
             ))}
           </div>

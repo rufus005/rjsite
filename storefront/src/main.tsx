@@ -1,9 +1,10 @@
-import { Component, Suspense, lazy, type ReactNode } from "react";
+import { Component, Suspense, lazy, useEffect, type ReactNode } from "react";
 import { createRoot } from "react-dom/client";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, useLocation } from "react-router-dom";
 import { StoreProvider } from "./context/Store";
 import Layout from "./components/Layout";
 import { Home, Shop } from "./pages/Catalog";
+import { trackContactClick, trackPageView } from "./services/marketing";
 import "./styles.css";
 const Product = lazy(() => import("./pages/Product"));
 const Checkout = lazy(() => import("./pages/Checkout"));
@@ -13,6 +14,17 @@ const Cart = lazy(() =>
 const Order = lazy(() => import("./pages/Order"));
 const Info = lazy(() => import("./pages/Info"));
 const Admin = lazy(() => import("./pages/Admin"));
+function RouteAnalytics() {
+  const location = useLocation();
+  const path = location.pathname + location.search;
+  useEffect(() => trackPageView(path), [path]);
+  useEffect(() => {
+    const handleClick = (event: MouseEvent) => trackContactClick(event.target);
+    document.addEventListener("click", handleClick);
+    return () => document.removeEventListener("click", handleClick);
+  }, []);
+  return null;
+}
 class ErrorBoundary extends Component<
   { children: ReactNode },
   { error: string }
@@ -37,6 +49,7 @@ createRoot(document.getElementById("root")!).render(
   <ErrorBoundary>
     <BrowserRouter>
       <StoreProvider>
+        <RouteAnalytics />
         <Suspense
           fallback={
             <div className="section" role="status">

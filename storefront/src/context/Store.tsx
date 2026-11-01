@@ -13,7 +13,7 @@ import {
   where,
   enableNetwork,
 } from "firebase/firestore";
-import { db, isEmulator, ensureAppCheck } from "../services/firebase";
+import { db, isEmulator, ensureAppCheck } from "../services/firebase/core";
 import type { Product, Settings, CartLine } from "../types";
 const Context = createContext<{
   products: Product[];

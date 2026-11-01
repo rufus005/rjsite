@@ -1,2 +1,8 @@
 User-agent: *
 Allow: /
+Disallow: /admin
+Disallow: /checkout
+Disallow: /cart
+Disallow: /order
+
+Sitemap: https://www.shoerack.space/sitemap.xml

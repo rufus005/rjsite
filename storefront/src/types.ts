@@ -8,6 +8,11 @@ export type Variant = {
   originalPrice: number;
   stock: number;
   images: string[];
+  responsiveImages?: ResponsiveImage[];
+};
+export type ResponsiveImage = {
+  src: string;
+  variants: { src: string; width: number }[];
 };
 export type Product = {
   id: string;
@@ -21,6 +26,7 @@ export type Product = {
   published: boolean;
   sample: boolean;
   images: string[];
+  responsiveImages?: ResponsiveImage[];
   specifications: Record<string, string>;
   warranty: string;
   warrantyApproved: boolean;
@@ -37,6 +43,7 @@ export type Settings = {
   address: string;
   banner: string;
   bannerImage: string;
+  bannerResponsiveImage?: ResponsiveImage;
   siteUrl: string;
   shippingFee: number;
   cod: {

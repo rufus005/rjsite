@@ -9,17 +9,23 @@ import { getBlob, ref } from "firebase/storage";
 import { Link } from "react-router-dom";
 import {
   auth,
-  call,
-  db,
-  storage,
   isAdminUser,
   prepareAdminRequest,
-  ensureAppCheck,
-} from "../services/firebase";
+} from "../services/firebase/auth";
+import { call } from "../services/firebase/functions";
+import { db, ensureAppCheck } from "../services/firebase/core";
+import { storage } from "../services/firebase/storage";
 import { useStore } from "../context/Store";
 import { useMeta } from "../hooks/useMeta";
 import { errorMessage, money, words } from "../utils/format";
-import type { Order, Product, Settings, Variant } from "../types";
+import type {
+  Order,
+  Product,
+  ResponsiveImage,
+  Settings,
+  Variant,
+} from "../types";
+import { BRAND_NAME } from "../utils/brand";
 import ImageManager from "../components/ImageManager";
 const emptyVariant = (): Variant => ({
   id: crypto.randomUUID(),
@@ -54,7 +60,7 @@ const emptyProduct = (): Product => ({
 const timestamp = (v: Order["createdAt"]) =>
   typeof v === "number" ? v : v.seconds * 1000;
 export default function Admin() {
-  useMeta("Administration | Rufus", "", true);
+  useMeta(`Administration | ${BRAND_NAME}`, "", true);
   const [isAdmin, setIsAdmin] = useState(false),
     [authReady, setAuthReady] = useState(false),
     [email, setEmail] = useState(import.meta.env.VITE_ADMIN_EMAIL || ""),
@@ -142,7 +148,7 @@ export default function Admin() {
     return (
       <div className="admin-login">
         <Link className="wordmark" to="/">
-          rufus<span>STORE ADMINISTRATION</span>
+          ZAK<span>ENTERPRISES · STORE ADMINISTRATION</span>
         </Link>
         <h1>Welcome back.</h1>
         <p>Sign in with your administrator account.</p>
@@ -209,7 +215,7 @@ export default function Admin() {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link className="wordmark" to="/">
-          rufus<span>STORE ADMINISTRATION</span>
+          ZAK<span>ENTERPRISES · STORE ADMINISTRATION</span>
         </Link>
         <nav>
           {[
@@ -443,11 +449,17 @@ function Products({
       </>
     );
   const field = (key: keyof Product, value: unknown) =>
-    setEdit({ ...edit, [key]: value });
+    setEdit((current) => (current ? { ...current, [key]: value } : current));
   const variant = (index: number, key: keyof Variant, value: unknown) =>
-    field(
-      "variants",
-      edit.variants.map((v, i) => (i === index ? { ...v, [key]: value } : v)),
+    setEdit((current) =>
+      current
+        ? {
+            ...current,
+            variants: current.variants.map((v, i) =>
+              i === index ? { ...v, [key]: value } : v,
+            ),
+          }
+        : current,
     );
   return (
     <form
@@ -545,7 +557,9 @@ function Products({
       <h2>Product images</h2>
       <ImageManager
         images={edit.images}
+        responsiveImages={edit.responsiveImages}
         onChange={(v) => field("images", v)}
+        onResponsiveImagesChange={(v) => field("responsiveImages", v)}
         onBusyChange={updatePendingUploads}
       />
       <h2>Variants & inventory</h2>
@@ -597,7 +611,11 @@ function Products({
           </div>
           <ImageManager
             images={v.images}
+            responsiveImages={v.responsiveImages}
             onChange={(images) => variant(i, "images", images)}
+            onResponsiveImagesChange={(images) =>
+              variant(i, "responsiveImages", images)
+            }
             onBusyChange={updatePendingUploads}
           />
         </fieldset>
@@ -1043,6 +1061,14 @@ function SettingsEditor({ run, busy }: { run: Runner; busy: boolean }) {
         the documented bootstrap.
       </p>
     );
+  const updateBannerResponsiveImage = (images: ResponsiveImage[]) =>
+    setS((current) => {
+      if (!current) return current;
+      const next = { ...current };
+      if (images[0]) next.bannerResponsiveImage = images[0];
+      else delete next.bannerResponsiveImage;
+      return next;
+    });
   return (
     <form
       className="admin-editor"
@@ -1077,7 +1103,15 @@ function SettingsEditor({ run, busy }: { run: Runner; busy: boolean }) {
         kind="banners"
         single
         images={s.bannerImage ? [s.bannerImage] : []}
-        onChange={(images) => setS({ ...s, bannerImage: images[0] || "" })}
+        responsiveImages={
+          s.bannerResponsiveImage ? [s.bannerResponsiveImage] : []
+        }
+        onChange={(images) =>
+          setS((current) =>
+            current ? { ...current, bannerImage: images[0] || "" } : current,
+          )
+        }
+        onResponsiveImagesChange={updateBannerResponsiveImage}
         onBusyChange={updatePendingUploads}
       />
       <label>

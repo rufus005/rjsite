@@ -8,14 +8,16 @@ import {
 import { useStore } from "../context/Store";
 import { useMeta } from "../hooks/useMeta";
 import ProductCard from "../components/ProductCard";
+import { BRAND_NAME, BRAND_TAGLINE } from "../utils/brand";
+import { ResponsiveImg } from "../utils/images";
 const normalizeCategory = (category: string) =>
   category.toLowerCase().replace(/[\s-]/g, "");
 
 export function Home() {
   const { products, loading, settings } = useStore();
   useMeta(
-    "Rufus Shoe Store — A place for every pair.",
-    "Thoughtful shoe storage and everyday essentials.",
+    `Buy a Shoe Rack Online | ${BRAND_NAME}`,
+    "Shop metal shoe racks, shoe organizers and practical shoe storage for your home.",
     products.some((p) => p.sample),
   );
   return (
@@ -23,7 +25,7 @@ export function Home() {
       <section className="hero">
         <div className="hero-copy">
           <div className="eyebrow">
-            <span /> LESS CLUTTER. MORE LIVING.
+            <span /> {BRAND_TAGLINE.toUpperCase()}
           </div>
           <h1>
             A place for
@@ -31,8 +33,8 @@ export function Home() {
             every <em>pair.</em>
           </h1>
           <p>
-            Thoughtfully chosen shoe racks, home storage and everyday
-            essentials. Find a little more room for what matters.
+            Explore shoe racks, metal shoe stands and shoe organizers designed
+            to make shoe storage simple.
           </p>
           <Link to="/shop" className="button">
             Explore the collection <ArrowUpRight size={19} />
@@ -47,11 +49,24 @@ export function Home() {
             GOOD DESIGN.
             <br />A WARMER WELCOME.
           </span>
-          <img
+          <ResponsiveImg
             src={settings?.bannerImage || "/images/sample-1-0.svg"}
-            alt="Original illustration of a slim sage shoe cabinet"
+            responsiveImages={
+              settings?.bannerResponsiveImage
+                ? [settings.bannerResponsiveImage]
+                : undefined
+            }
+            sizes="(max-width: 760px) 100vw, 58vw"
+            alt={
+              settings?.bannerImage
+                ? "Shoe rack and shoe storage"
+                : "Illustration of a slim shoe cabinet"
+            }
             width="600"
             height="560"
+            loading="eager"
+            fetchPriority="high"
+            decoding="async"
           />
           <div className="hero-product">
             <div>
@@ -105,16 +120,22 @@ export function Home() {
               className="category-card"
             >
               <span className="category-number">0{i + 1}</span>
-              <img
+              <ResponsiveImg
                 src={"/images/" + c.img}
+                sizes="(max-width: 760px) 60vw, 20vw"
                 width="600"
                 height="560"
                 loading="lazy"
-                alt={`Sample ${c.name.toLowerCase()} illustration`}
+                decoding="async"
+                alt={`${c.name} ${c.sub.toLowerCase()} illustration`}
               />
               <div>
                 <h3>{c.name}</h3>
-                <p>{c.sub}</p>
+                <p>
+                  {c.name === "Shoe racks"
+                    ? "Shoe storage and footwear racks for every entryway"
+                    : c.sub}
+                </p>
                 <ArrowUpRight />
               </div>
             </Link>
@@ -147,7 +168,7 @@ export function Home() {
         )}
       </section>
       <section className="story-banner">
-        <span className="eyebrow">THE RUFUS WAY</span>
+        <span className="eyebrow">THE ZAK WAY</span>
         <h2>
           Home starts with
           <br />a little <em>breathing room.</em>
@@ -159,7 +180,7 @@ export function Home() {
         <Link to="/about" className="text-link">
           Get to know us <ArrowUpRight size={18} />
         </Link>
-        <span className="story-decoration">r.</span>
+        <span className="story-decoration">z.</span>
       </section>
     </>
   );
@@ -183,9 +204,16 @@ export function Shop() {
     sort = params.get("sort") || "name",
     stock = params.get("stock") === "true",
     page = Math.max(1, Number(params.get("page")) || 1);
+  const hasFoldableStand = products.some((p) =>
+    `${p.name} ${p.description}`.toLowerCase().includes("foldable shoe stand"),
+  );
   useMeta(
-    "Shop the collection | Rufus Shoe Store",
-    "Browse shoe racks, storage and footwear.",
+    selectedCategory
+      ? `${selectedCategory} | ${BRAND_NAME}`
+      : `Shoe Racks, Organizers & Storage | ${BRAND_NAME}`,
+    selectedCategory
+      ? `Browse ${selectedCategory.toLowerCase()} and find a shoe storage solution for your space.`
+      : `Shop shoe racks, footwear racks, shoe organizers and metal shoe stands${hasFoldableStand ? ", including foldable shoe stands" : ""} for practical shoe storage.`,
     products.some((p) => p.sample),
   );
   const change = (key: string, value: string) => {
@@ -230,9 +258,13 @@ export function Shop() {
         <span>/</span> The collection
       </div>
       <div className="shop-intro">
-        <span className="eyebrow">SPACE FOR THE EVERYDAY</span>
-        <h1>The collection.</h1>
-        <p>Find the right fit for your home, and your everyday.</p>
+        <span className="eyebrow">{BRAND_TAGLINE.toUpperCase()}</span>
+        <h1>{selectedCategory || "Shoe racks, organizers & storage."}</h1>
+        <p>
+          {selectedCategory
+            ? `Find a ${selectedCategory.toLowerCase()} that fits your home and everyday routine.`
+            : "Shop shoe racks, shoe organizers and practical shoe storage for your home."}
+        </p>
       </div>
       <div className="shop-layout">
         <aside className="filters">

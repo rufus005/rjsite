@@ -2,8 +2,11 @@ import { useEffect, useState, type FormEvent } from "react";
 import { Link, useLocation, useParams } from "react-router-dom";
 import { ref, uploadBytes } from "firebase/storage";
 import { CheckCircle2, Copy } from "lucide-react";
-import { call, guest, storage } from "../services/firebase";
+import { call } from "../services/firebase/functions";
+import { guest } from "../services/firebase/auth";
+import { storage } from "../services/firebase/storage";
 import { useMeta } from "../hooks/useMeta";
+import { BRAND_NAME } from "../utils/brand";
 import { errorMessage, money, words } from "../utils/format";
 import type { Order } from "../types";
 export default function OrderPage() {
@@ -16,7 +19,7 @@ export default function OrderPage() {
     [busy, setBusy] = useState(false),
     [copied, setCopied] = useState(false),
     [message, setMessage] = useState(loc.state?.uploadError || "");
-  useMeta("Private order | Rufus", "", true);
+  useMeta(`Private order | ${BRAND_NAME}`, "", true);
   async function load(e?: FormEvent) {
     e?.preventDefault();
     setBusy(true);

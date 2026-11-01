@@ -25,6 +25,24 @@ test("Storage emulator URLs are accepted only in demo Functions; production requ
       "https://firebasestorage.googleapis.com/v0/b/example/o/test",
     ];
     assert.equal(productSchema.safeParse(product).success, true);
+    product.responsiveImages = [
+      {
+        src: product.images[0],
+        variants: [
+          {
+            src: "https://firebasestorage.googleapis.com/v0/b/example/o/test-480.webp",
+            width: 480,
+          },
+          {
+            src: "https://firebasestorage.googleapis.com/v0/b/example/o/test-960.webp",
+            width: 960,
+          },
+        ],
+      },
+    ];
+    assert.equal(productSchema.safeParse(product).success, true);
+    product.responsiveImages[0].variants[0].width = 0;
+    assert.equal(productSchema.safeParse(product).success, false);
   } finally {
     if (project === undefined) delete process.env.GCLOUD_PROJECT;
     else process.env.GCLOUD_PROJECT = project;

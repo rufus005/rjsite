@@ -11,7 +11,7 @@ import { readFile } from "node:fs/promises";
 import { z, ZodError } from "zod";
 import { StoreService } from "./service.js";
 import { id, type Product, type Settings } from "./schema.js";
-import { renderPage, sitemap } from "./render.js";
+import { renderPage, sitemap, SITE_URL } from "./render.js";
 initializeApp();
 const db = getFirestore();
 const service = new StoreService(db);
@@ -24,10 +24,7 @@ const options = {
 };
 const adminEmail = "rufus090420@gmail.com";
 function admin(req: CallableRequest) {
-  if (
-    req.auth?.token.admin !== true &&
-    req.auth?.token.email !== adminEmail
-  )
+  if (req.auth?.token.admin !== true && req.auth?.token.email !== adminEmail)
     throw new HttpsError(
       "permission-denied",
       "Administrator access is required.",
@@ -187,7 +184,7 @@ export const storefront = onRequest(
         res
           .type("text")
           .send(
-            `User-agent: *\nDisallow: /admin\nDisallow: /checkout\nDisallow: /cart\nDisallow: /order\nSitemap: ${settings.siteUrl}/sitemap.xml\n`,
+            `User-agent: *\nDisallow: /admin\nDisallow: /checkout\nDisallow: /cart\nDisallow: /order\nSitemap: ${SITE_URL}/sitemap.xml\n`,
           );
         return;
       }

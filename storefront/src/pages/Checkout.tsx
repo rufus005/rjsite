@@ -5,11 +5,15 @@ import { ref, uploadBytes } from "firebase/storage";
 import { useStore } from "../context/Store";
 import { money, errorMessage } from "../utils/format";
 import { useMeta } from "../hooks/useMeta";
-import { call, guest, isEmulator, storage } from "../services/firebase";
+import { BRAND_NAME } from "../utils/brand";
+import { call } from "../services/firebase/functions";
+import { guest } from "../services/firebase/auth";
+import { isEmulator } from "../services/firebase/core";
+import { storage } from "../services/firebase/storage";
 import type { Quote } from "../types";
 export function Cart() {
   const { cart, setCart, products, loading } = useStore();
-  useMeta("Your cart | Rufus", "", true);
+  useMeta(`Your cart | ${BRAND_NAME}`, "", true);
   const lines = cart.map((l) => ({
     ...l,
     p: products.find((p) => p.id === l.productId),
@@ -40,10 +44,14 @@ export function Cart() {
             {lines.map((l) => (
               <div className="cart-line" key={l.productId + l.variantId}>
                 <img
-                  src={l.v?.images[0] || l.p?.images[0] || "/images/social.svg"}
+                  src={
+                    l.v?.images[0] || l.p?.images[0] || "/images/social-zak.svg"
+                  }
                   width="110"
                   height="100"
                   alt={l.p?.name || "Unavailable item"}
+                  loading="lazy"
+                  decoding="async"
                 />
                 <div>
                   <Link to={l.p ? "/product/" + l.p.slug : "/shop"}>
@@ -151,7 +159,7 @@ export default function Checkout() {
     city: "",
     state: "",
   });
-  useMeta("Checkout | Rufus", "", true);
+  useMeta(`Checkout | ${BRAND_NAME}`, "", true);
   useEffect(() => {
     if (settings && !settings[method].enabled) {
       if (settings.cod.enabled) setMethod("cod");
@@ -442,6 +450,8 @@ export default function Checkout() {
                     alt="Store payment QR code"
                     width="220"
                     height="220"
+                    loading="lazy"
+                    decoding="async"
                   />
                 ) : (
                   <p>No QR image configured. Use the UPI ID or app link.</p>
@@ -495,10 +505,12 @@ export default function Checkout() {
               {quote.lines.map((l) => (
                 <div className="summary-item" key={l.productId + l.variantId}>
                   <img
-                    src={l.image || "/images/social.svg"}
+                    src={l.image || "/images/social-zak.svg"}
                     width="64"
                     height="64"
                     alt=""
+                    loading="lazy"
+                    decoding="async"
                   />
                   <div>
                     <strong>{l.name}</strong>

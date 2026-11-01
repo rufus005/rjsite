@@ -11,7 +11,8 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useStore } from "../context/Store";
-import { isEmulator } from "../services/firebase";
+import { isEmulator } from "../services/firebase/core";
+import { BRAND_NAME, BRAND_TAGLINE, updateBrandText } from "../utils/brand";
 export default function Layout() {
   const { cart, settings, error, retry } = useStore();
   const [menu, setMenu] = useState(false);
@@ -28,14 +29,14 @@ export default function Layout() {
       <div className="announcement">
         {isEmulator
           ? "LOCAL PREVIEW · Sample products and prices · Do not send payments"
-          : settings?.banner || "Welcome to Rufus Shoe Store"}
+          : updateBrandText(settings?.banner || BRAND_TAGLINE)}
         <span>
           Made for everyday living <ArrowUpRight size={12} />
         </span>
       </div>
       <header className="header">
-        <Link className="wordmark" to="/" aria-label="Rufus Shoe Store home">
-          rufus<span>SHOE STORE</span>
+        <Link className="wordmark" to="/" aria-label={`${BRAND_NAME} home`}>
+          ZAK<span>ENTERPRISES</span>
         </Link>
         <nav
           className={menu ? "navigation open" : "navigation"}
@@ -104,7 +105,7 @@ export default function Layout() {
         <div className="footer-top">
           <div>
             <Link className="wordmark" to="/">
-              rufus<span>SHOE STORE</span>
+              ZAK<span>ENTERPRISES</span>
             </Link>
             <p>
               A little order.
@@ -135,8 +136,7 @@ export default function Layout() {
         </div>
         <div className="footer-bottom">
           <span>
-            © {new Date().getFullYear()}{" "}
-            {settings?.storeName || "Rufus Shoe Store"}
+            © {new Date().getFullYear()} {BRAND_NAME}
           </span>
           <span>Considered spaces. Everyday essentials.</span>
         </div>

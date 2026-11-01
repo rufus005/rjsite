@@ -96,11 +96,13 @@ export default function CartDrawer({ open, onClose, triggerRef }: Props) {
                 src={
                   variant.images[0] ||
                   product.images[0] ||
-                  "/images/social.svg"
+                  "/images/social-zak.svg"
                 }
                 width="80"
                 height="90"
                 alt=""
+                loading="lazy"
+                decoding="async"
               />
               <div>
                 <h3>{product.name}</h3>
