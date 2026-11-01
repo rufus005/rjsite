@@ -18,40 +18,39 @@ export default function ProductCard({ product: p }: { product: Product }) {
           loading="lazy"
           decoding="async"
         />
-        <span className="tag">
-          {p.sample ? "SAMPLE COLLECTION" : p.category}
-        </span>
         <span className="card-arrow">
           <ArrowUpRight size={20} />
         </span>
       </Link>
-      <div className="product-topline">
-        <span>{p.category}</span>
-        <span>{p.variants.length} options</span>
+      <div className="product-info">
+        <div className="product-topline">
+          <span className="product-category">{p.category}</span>
+          <span>{p.variants.length} options</span>
+        </div>
+        <Link to={"/product/" + p.slug}>
+          <h3>{p.name}</h3>
+        </Link>
+        {!p.variants.some((v) => v.stock > 0) && (
+          <small>Currently unavailable</small>
+        )}
+        <div className="product-price">
+          <span>From {money(v.price)}</span>
+          {v.originalPrice > v.price && <del>{money(v.originalPrice)}</del>}
+          <span
+            className="swatches"
+            aria-label={p.variants.map((v) => v.color).join(", ")}
+          >
+            {p.variants.slice(0, 4).map((v, i) => (
+              <i
+                key={v.id}
+                style={{
+                  background: ["#889783", "#3c4b43", "#d7c6ad", "#a26e53"][i],
+                }}
+              />
+            ))}
+          </span>
+        </div>
       </div>
-      <Link to={"/product/" + p.slug}>
-        <h3>{p.name}</h3>
-      </Link>
-      <div className="product-price">
-        <span>From {money(v.price)}</span>
-        {v.originalPrice > v.price && <del>{money(v.originalPrice)}</del>}
-        <span
-          className="swatches"
-          aria-label={p.variants.map((v) => v.color).join(", ")}
-        >
-          {p.variants.slice(0, 4).map((v, i) => (
-            <i
-              key={v.id}
-              style={{
-                background: ["#889783", "#3c4b43", "#d7c6ad", "#a26e53"][i],
-              }}
-            />
-          ))}
-        </span>
-      </div>
-      {!p.variants.some((v) => v.stock > 0) && (
-        <small>Currently unavailable</small>
-      )}
     </article>
   );
 }
