@@ -7,7 +7,7 @@ export default function ProductCard({ product: p }: { product: Product }) {
   const v = p.variants.reduce((a, b) => (a.price < b.price ? a : b));
   return (
     <article className="product-card">
-      <Link to={"/product/" + p.slug} className="product-picture">
+      <Link to={"/product/" + p.slug} className="product-image-container">
         <ResponsiveImg
           src={p.images[0] || "/images/social-zak.svg"}
           responsiveImages={p.responsiveImages}
@@ -28,7 +28,7 @@ export default function ProductCard({ product: p }: { product: Product }) {
           <span>{p.variants.length} options</span>
         </div>
         <Link to={"/product/" + p.slug}>
-          <h3>{p.name}</h3>
+          <h3 className="product-title">{p.name}</h3>
         </Link>
         {!p.variants.some((v) => v.stock > 0) && (
           <small>Currently unavailable</small>

@@ -493,24 +493,27 @@ legend {
   height: 100%;
   min-width: 0;
 }
-.product-picture {
-  display: block;
+.product-image-container {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   position: relative;
-  background: #fafafa;
+  aspect-ratio: 4 / 5;
+  background-color: #f9f9f9;
   border-radius: 8px;
   overflow: hidden;
 }
-.product-picture > picture {
+.product-image-container > picture {
   display: block;
-}
-.product-picture > img,
-.product-picture > picture > img {
   width: 100%;
-  aspect-ratio: 4/5;
+  height: 100%;
+}
+.product-image-container > img,
+.product-image-container > picture > img {
+  width: 100%;
+  height: 100%;
   object-fit: contain;
   padding: 8px;
-  background: #fafafa;
-  border-radius: 8px;
   display: block;
 }
 .card-arrow {
@@ -543,9 +546,9 @@ legend {
   flex: 1;
   flex-direction: column;
 }
-.product-card h3 {
+.product-title {
   display: -webkit-box;
-  min-height: 2.5rem;
+  min-height: 2.8em;
   overflow: hidden;
   -webkit-box-orient: vertical;
   -webkit-line-clamp: 2;
@@ -1703,7 +1706,7 @@ code {
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 28px 15px;
   }
-  .product-card h3 {
+  .product-title {
     font-size: 14px;
   }
   .product-topline {
