@@ -17,7 +17,8 @@ declare global {
   }
 }
 
-const pixelId = import.meta.env.VITE_META_PIXEL_ID?.trim();
+const pixelId =
+  import.meta.env.VITE_META_PIXEL_ID?.trim() || "2277084086405412";
 let initializedId = "";
 
 function initializePixel() {
