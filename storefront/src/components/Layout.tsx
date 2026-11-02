@@ -36,7 +36,7 @@ export default function Layout() {
       </div>
       <header className="header">
         <Link className="wordmark" to="/" aria-label={`${BRAND_NAME} home`}>
-          ZAK<span>ENTERPRISES</span>
+          ZAK<span>SHOE RACK</span>
         </Link>
         <nav
           className={menu ? "navigation open" : "navigation"}
@@ -105,7 +105,7 @@ export default function Layout() {
         <div className="footer-top">
           <div>
             <Link className="wordmark" to="/">
-              ZAK<span>ENTERPRISES</span>
+              ZAK<span>SHOE RACK</span>
             </Link>
             <p>
               A little order.

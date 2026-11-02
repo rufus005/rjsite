@@ -271,12 +271,12 @@ test("rate limiting and SSR metadata, sitemap and real route status", async () =
   assert.equal(page.status, 200);
   assert.match(page.html, /<h1>The Entryway/);
   assert.match(page.html, /application\/ld\+json/);
-  assert.match(page.html, /<title>.*ZAK ENTERPRISES<\/title>/);
+  assert.match(page.html, /<title>.*ZAK SHOE RACK<\/title>/);
   assert.match(
     page.html,
     /rel="canonical" href="https:\/\/www\.shoerack\.space\/product\/the-entryway"/,
   );
-  assert.match(page.html, /"name":"ZAK ENTERPRISES"/);
+  assert.match(page.html, /"name":"ZAK SHOE RACK"/);
   assert.match(page.html, /3499/);
   assert.match(page.html, /InStock/);
   assert.equal(

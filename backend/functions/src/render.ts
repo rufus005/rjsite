@@ -1,14 +1,14 @@
 import type { Product, Settings } from "./schema.js";
-const BRAND_NAME = "ZAK ENTERPRISES";
+const BRAND_NAME = "ZAK SHOE RACK";
+const BRAND_NAME_TITLE_CASE = "ZAK Shoe Rack";
 export const SITE_URL = "https://www.shoerack.space";
 const pageMetadata: Record<
   string,
   { title: string; description: string; heading: string }
 > = {
   "/": {
-    title: `Buy a Shoe Rack Online | ${BRAND_NAME}`,
-    description:
-      "Shop metal shoe racks, shoe organizers and practical shoe storage for your home.",
+    title: `${BRAND_NAME_TITLE_CASE} - Best Powder-Coated Metal Shoe Racks`,
+    description: `Shop durable powder-coated steel shoe racks from ${BRAND_NAME_TITLE_CASE}. Free delivery and Cash on Delivery across Bangalore.`,
     heading: "A place for every pair.",
   },
   "/shop": {
@@ -25,7 +25,7 @@ const pageMetadata: Record<
   "/contact": {
     title: `Contact ${BRAND_NAME} | Shoe Rack Support`,
     description:
-      "Contact ZAK ENTERPRISES for help choosing a shoe rack or with an existing order.",
+      `Contact ${BRAND_NAME} for help choosing a shoe rack or with an existing order.`,
     heading: "Let’s find your good fit.",
   },
   "/shipping": {
@@ -59,7 +59,7 @@ function updateBrand(value: string) {
 
 function brandedTitle(value: string) {
   const title = updateBrand(value)
-    .replace(/\s*(?:\||·|—|-)\s*ZAK ENTERPRISES\s*$/i, "")
+    .replace(/\s*(?:\||·|—|-)\s*ZAK SHOE RACK\s*$/i, "")
     .trim();
   return `${title} | ${BRAND_NAME}`;
 }
@@ -108,7 +108,7 @@ export function renderPage(
   const description = p
     ? updateBrand(p.seo.description || p.description)
     : pageMetadata[path]?.description ||
-      "Store information from ZAK ENTERPRISES.";
+      `Store information from ${BRAND_NAME}.`;
   const photo = p?.images[0] || "/images/social-zak.svg",
     photoUrl = photo.startsWith("/") ? base + photo : photo;
   const schema: Record<string, unknown>[] = [

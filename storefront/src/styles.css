@@ -199,7 +199,8 @@ legend {
   letter-spacing: 2.8px;
   font-size: 8px;
   font-weight: 500;
-  margin-top: 9px;
+  margin-top: 6px;
+  text-align: center;
 }
 .navigation {
   display: flex;
@@ -420,31 +421,39 @@ legend {
 }
 .category-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 22px;
+  max-width: 1120px;
+  margin: 0 auto;
 }
 .category-card {
-  height: 310px;
-  background: #ebece4;
   position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  align-items: flex-end;
+  min-width: 0;
+  aspect-ratio: 1.65;
+  padding: clamp(20px, 3vw, 34px);
+  background: #ebece4;
   overflow: hidden;
+  border-radius: 12px;
 }
 .category-card:nth-child(2) {
   background: #e9e5dc;
 }
-.category-card:nth-child(3) {
-  background: #efe6d9;
-}
 .category-card > picture {
   position: absolute;
-  width: 65%;
-  height: 90%;
-  right: -10px;
-  top: -5px;
+  z-index: 0;
+  width: 100%;
+  height: 64%;
+  inset: 0 0 auto;
+  padding: 0 18%;
 }
 .category-card > picture > img {
   width: 100%;
   height: 100%;
+  object-fit: contain;
   mix-blend-mode: multiply;
   transition: transform 0.3s;
 }
@@ -453,29 +462,42 @@ legend {
 }
 .category-number {
   position: absolute;
-  top: 21px;
-  left: 23px;
+  top: 20px;
+  left: 24px;
+  z-index: 1;
   font-size: 10px;
   color: #78816f;
 }
-.category-card > div {
-  position: absolute;
-  bottom: 22px;
-  left: 24px;
-  right: 24px;
+.category-card-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  min-width: 0;
+  padding-bottom: 2px;
+}
+.category-card-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-width: 0;
+  gap: 12px;
 }
 .category-card h3 {
+  min-width: 0;
   font-size: 20px;
-  margin-bottom: 4px;
+  margin: 0 0 4px;
+  overflow-wrap: anywhere;
+}
+.category-card-heading svg {
+  flex: 0 0 auto;
+  width: 19px;
+  height: 19px;
 }
 .category-card p {
   font-size: 11px;
   margin: 0;
-}
-.category-card div > svg {
-  position: absolute;
-  right: 0;
-  bottom: 5px;
+  max-width: 50ch;
+  overflow-wrap: anywhere;
 }
 .bestsellers {
   padding-top: 20px;
@@ -1527,9 +1549,6 @@ code {
   .hero-footnote span:last-child {
     display: none;
   }
-  .category-card {
-    height: 260px;
-  }
   .shop-layout {
     gap: 25px;
     grid-template-columns: 190px 1fr;
@@ -1678,26 +1697,23 @@ code {
     gap: 15px;
   }
   .category-card {
-    height: 215px;
+    aspect-ratio: 1.55;
+    min-height: 225px;
+    padding: 22px;
   }
   .category-card > picture {
-    height: 115%;
-    width: 58%;
-    top: -20px;
-    right: 0;
+    height: 62%;
+    padding: 0 14%;
   }
-  .category-card > div {
-    left: 23px;
-    bottom: 25px;
+  .category-card-content {
+    width: 100%;
   }
   .category-card h3 {
     font-size: 22px;
   }
   .category-number {
-    top: 20px;
-  }
-  .category-card div > svg {
-    right: 0;
+    top: 18px;
+    left: 22px;
   }
   .bestsellers {
     padding-top: 15px;

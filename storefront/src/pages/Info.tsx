@@ -18,16 +18,16 @@ export default function Info() {
   const descriptions: Record<string, string> = {
     about: `${BRAND_NAME}: ${BRAND_TAGLINE}.`,
     contact:
-      "Contact ZAK ENTERPRISES for help choosing a shoe rack or with an existing order.",
+      `Contact ${BRAND_NAME} for help choosing a shoe rack or with an existing order.`,
     shipping:
       "Review delivery information and shipping charges before ordering.",
     returns: "Read the returns and exchanges information for your order.",
-    privacy: "Learn how ZAK ENTERPRISES handles customer information.",
-    terms: "Review the terms and conditions for shopping with ZAK ENTERPRISES.",
+    privacy: `Learn how ${BRAND_NAME} handles customer information.`,
+    terms: `Review the terms and conditions for shopping with ${BRAND_NAME}.`,
   };
   useMeta(
     `${title} | ${BRAND_NAME}`,
-    descriptions[key] || "Store information from ZAK ENTERPRISES.",
+    descriptions[key] || `Store information from ${BRAND_NAME}.`,
     !titles[key],
   );
   return (

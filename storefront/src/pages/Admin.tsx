@@ -148,7 +148,7 @@ export default function Admin() {
     return (
       <div className="admin-login">
         <Link className="wordmark" to="/">
-          ZAK<span>ENTERPRISES · STORE ADMINISTRATION</span>
+          ZAK<span>SHOE RACK · STORE ADMINISTRATION</span>
         </Link>
         <h1>Welcome back.</h1>
         <p>Sign in with your administrator account.</p>
@@ -215,7 +215,7 @@ export default function Admin() {
     <div className="admin-shell">
       <aside className="admin-sidebar">
         <Link className="wordmark" to="/">
-          ZAK<span>ENTERPRISES · STORE ADMINISTRATION</span>
+          ZAK<span>SHOE RACK · STORE ADMINISTRATION</span>
         </Link>
         <nav>
           {[

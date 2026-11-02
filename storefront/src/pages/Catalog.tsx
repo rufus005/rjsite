@@ -8,7 +8,11 @@ import {
 import { useStore } from "../context/Store";
 import { useMeta } from "../hooks/useMeta";
 import ProductCard from "../components/ProductCard";
-import { BRAND_NAME, BRAND_TAGLINE } from "../utils/brand";
+import {
+  BRAND_NAME,
+  BRAND_NAME_TITLE_CASE,
+  BRAND_TAGLINE,
+} from "../utils/brand";
 import { ResponsiveImg } from "../utils/images";
 const normalizeCategory = (category: string) =>
   category.toLowerCase().replace(/[\s-]/g, "");
@@ -16,8 +20,8 @@ const normalizeCategory = (category: string) =>
 export function Home() {
   const { products, loading, settings } = useStore();
   useMeta(
-    `Buy a Shoe Rack Online | ${BRAND_NAME}`,
-    "Shop metal shoe racks, shoe organizers and practical shoe storage for your home.",
+    `${BRAND_NAME_TITLE_CASE} - Best Powder-Coated Metal Shoe Racks`,
+    `Shop durable powder-coated steel shoe racks from ${BRAND_NAME_TITLE_CASE}. Free delivery and Cash on Delivery across Bangalore.`,
     products.some((p) => p.sample),
   );
   return (
@@ -107,12 +111,6 @@ export function Home() {
               cat: "Storage cabinets",
               img: "sample-4-0.svg",
             },
-            {
-              name: "Everyday footwear",
-              sub: "Step into your day",
-              cat: "Footwear",
-              img: "sample-3-0.svg",
-            },
           ].map((c, i) => (
             <Link
               key={c.name}
@@ -129,14 +127,16 @@ export function Home() {
                 decoding="async"
                 alt={`${c.name} ${c.sub.toLowerCase()} illustration`}
               />
-              <div>
-                <h3>{c.name}</h3>
+                <div className="category-card-content">
+                <div className="category-card-heading">
+                  <h3>{c.name}</h3>
+                  <ArrowUpRight aria-hidden="true" />
+                </div>
                 <p>
                   {c.name === "Shoe racks"
                     ? "Shoe storage and footwear racks for every entryway"
                     : c.sub}
                 </p>
-                <ArrowUpRight />
               </div>
             </Link>
           ))}

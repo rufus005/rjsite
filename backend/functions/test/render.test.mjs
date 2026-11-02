@@ -33,15 +33,30 @@ test("public page metadata uses the storefront domain and current brand", () => 
     settings,
   );
   assert.equal(page.status, 200);
-  assert.match(page.html, /<title>.*ZAK ENTERPRISES<\/title>/);
+  assert.match(page.html, /<title>.*ZAK SHOE RACK<\/title>/);
   assert.match(
     page.html,
     new RegExp(
       `rel="canonical" href="https://www\\.shoerack\\.space/product/${product.slug}"`,
     ),
   );
-  assert.match(page.html, /"name":"ZAK ENTERPRISES"/);
+  assert.match(page.html, /"name":"ZAK SHOE RACK"/);
   assert.match(page.html, /srcset="https:\/\/firebasestorage\.googleapis\.com/);
   assert.match(sitemap([product], settings), /https:\/\/www\.shoerack\.space/);
   assert.match(sitemap([product], settings), new RegExp(product.slug));
+
+  const home = renderPage(
+    "<head><!--seo--></head><body><!--prerender--></body>",
+    "/",
+    [product],
+    settings,
+  );
+  assert.match(
+    home.html,
+    /<title>ZAK Shoe Rack - Best Powder-Coated Metal Shoe Racks<\/title>/,
+  );
+  assert.match(
+    home.html,
+    /<meta name="description" content="Shop durable powder-coated steel shoe racks from ZAK Shoe Rack\. Free delivery and Cash on Delivery across Bangalore\.">/,
+  );
 });
