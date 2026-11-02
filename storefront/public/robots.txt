@@ -5,4 +5,4 @@ Disallow: /checkout
 Disallow: /cart
 Disallow: /order
 
-Sitemap: https://www.shoerack.space/sitemap.xml
+Sitemap: https://shoerack.space/sitemap.xml
